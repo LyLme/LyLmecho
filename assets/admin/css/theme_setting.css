@@ -1,0 +1,42 @@
+/* 主题配置表单 - Bootstrap 风格样式（原 layui 样式已替换） */
+.theme-config-form .form-text {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #a29c9c;
+    display: block;
+}
+
+.theme-config-form .form-text a {
+    color: #3b82f6;
+}
+
+.theme-config-form label.col-form-label {
+    font-weight: bold;
+    color: #4d5259;
+}
+
+/* 下拉框选中项高亮 */
+.theme-config-form select.form-select option:checked {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+/* 单选框/复选框选中文字颜色 */
+.theme-config-form .form-check-input:checked + .form-check-label {
+    color: #3b82f6;
+}
+
+/* 开关选中颜色 */
+.theme-config-form .form-switch .form-check-input:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.clr-alpha {
+    display: none !important;
+}
+
+textarea::-webkit-input-placeholder,
+input::-webkit-input-placeholder {
+    color: #aaaaaa;
+}
