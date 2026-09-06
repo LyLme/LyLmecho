@@ -1,0 +1,11 @@
+include/log.txt
+install/install.lock
+admin/cache.php
+admin/log.txt
+files/*
+include/webscan.log
+cache
+include/qrcode.png
+/config.php
+logs/*
+article/typecho/

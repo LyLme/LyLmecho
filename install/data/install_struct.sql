@@ -362,6 +362,70 @@ CREATE TABLE `lylme_article_page` (
 INSERT INTO `lylme_article_page` (`page_id`, `page_title`, `page_slug`, `page_content`, `page_status`, `page_order`, `page_time`, `page_update`) VALUES
 (1, '关于本站', 'about', '<h3>关于本站</h3><p>欢迎访问本站！这是一个基于 LyLme Spage 文章模块搭建的独立页面示例。</p>', 1, 1, NOW(), NOW());
 
+INSERT INTO `lylme_article` (`art_id`, `cat_id`, `art_title`, `art_slug`, `art_author`, `art_author_uid`, `art_content`, `art_excerpt`, `art_cover`, `art_keywords`, `art_description`, `art_views`, `art_likes`, `art_comments`, `art_top`, `art_status`, `art_allow_comment`, `art_time`, `art_update`) VALUES
+(NULL, 1, '欢迎来到本站', 'welcome', '管理员', 0, '欢迎来到本站！很高兴在这里见到你。
+
+本站是一个以网址收藏与分享为核心的**开源导航与博客二合一站点**：首页提供简洁高效的分类导航与搜索，同时用文章记录值得一看的发现、工具测评与上网技巧。本站基于开源项目 **LyLmecho** 搭建，而 LyLmecho 正是 **LyLme Spage（六零导航页）** 的独立增强版本——导航与写作，一站搞定。
+
+## 本站能做什么
+
+- **分类导航**：首页按分类整理常用网站，从效率工具到学习资源，分类浏览即可一键直达；
+- **快速搜索**：想找什么，在搜索框输入关键词即可快速定位目标；
+- **文章分享**：不定期更新收录心得、工具测评、上网技巧与站务公告；
+- **发现好站**：有私藏好站？欢迎通过站内提交渠道推荐，让更多人看到。
+
+<!--more-->
+
+## 本站由什么驱动：LyLme Spage 与 LyLmecho
+
+### 什么是 LyLme Spage（六零导航页）
+
+**LyLme Spage（六零导航页）** 是一款开源的网址导航程序，由 LyLme 开发团队（上云六零科技工作室）开发维护，以 Apache License 2.0 协议开源。它坚持“简洁高效、无广告”的理念，把互联网上最具价值的链接沉淀为可分类、可搜索的导航首页，被广泛用于搭建个人起始页与网址导航站。
+
+### 什么是 LyLmecho
+
+**LyLmecho** 是 LyLme Spage 的**独立全新版本（独立仓库）**，相当于六零导航页的“导航 + 博客”增强线。它在完整保留 LyLme Spage 导航能力的基础上，新增了一套完整的**文章 / 博客模块**与 **Typecho 兼容层**，因此：
+
+- 既能整理收藏导航首页，也能发布文章、独立页面并支持评论互动；
+- 可直接运行 Typecho 生态的博客主题，无需二次开发即可换肤；
+- 整体以 GNU General Public License v2.0（GPL-2.0）开源发布。
+
+一句话总结：**LyLme Spage 负责“导得好”，LyLmecho 让它还能“写得好”**——本站的文章与博客部分，正是运行在 LyLmecho 之上。
+
+## 常见问题（FAQ）
+
+**1. 这是一个什么类型的网站？**
+
+本站属于**个人性质的导航 + 博客站点**：核心是持续沉淀的高价值网址导航，外延是围绕上网效率与工具分享的原创文章，导航与博客数据同源、互相呼应。
+
+**2. 收藏的网址是人工整理的吗？**
+
+是。本站所有链接均由人工筛选、分类与维护，参考标准为：内容优质、更新稳定、无恶意弹窗与诱导下载、对多数访客有实用价值。被收录不代表背书，网站内容与运营情况随时可能变化，访问时请自行甄别。
+
+**3. 导航站为什么还要开博客？**
+
+基于 LyLmecho，导航与博客天然同源同库：公告、收录说明与工具测评可以长期沉淀，比一次性展示更适合承载“为什么收录、如何使用”这类深度内容，也方便访客留言交流。
+
+**4. LyLme Spage 与 LyLmecho 是同一个项目吗？**
+
+不是。LyLme Spage（lylme_spage）是主仓库，仅包含导航功能，采用 Apache-2.0 协议；LyLmecho 是独立的全新仓库，在共用导航内核的基础上集成文章模块与 Typecho 兼容层，整体采用 GPL-2.0 协议。二者同源，独立维护、独立发布。
+
+**5. 我的网站不希望被收录怎么办？**
+
+直接通过站内留言或文章评论区联系我们，说明站点域名即可，核实后会第一时间处理，并从收录中移除。
+
+## 声明与联系
+
+本站收录的网址均为人工收集整理，版权归原网站所有；本站不存储、不转发任何第三方网站内容。
+
+如发现收录信息有误、链接失效，或您的网站不希望被收录，欢迎**通过站内留言或文章评论区联系我们**。
+
+## 写在最后
+
+导航只是工具，收藏夹越满越容易落灰。愿你少一点“收藏从未停止”，多一点“行动从未开始”。
+
+祝你上网愉快！', '本站是基于开源项目 LyLmecho 搭建的导航与博客二合一站点。LyLmecho 是六零导航页（LyLme Spage）的独立增强版本，保留完整导航能力并集成文章模块，本文附两者关系与常见问题说明。', '', '欢迎来到本站,LyLme Spage,六零导航页,LyLmecho,网址导航,导航博客,开源博客', '欢迎来到本站。本站由 LyLmecho 驱动，即 LyLme Spage（六零导航页）的独立增强版，集网址导航与博客于一体，人工精选高价值链接并提供常见问题解答。', 0, 0, 0, 1, 1, 1, NOW(), NOW());
+
 DROP TABLE IF EXISTS `lylme_article_comment`;
 CREATE TABLE `lylme_article_comment` (
   `com_id` int(11) NOT NULL COMMENT '评论ID',
@@ -497,10 +561,6 @@ ALTER TABLE `lylme_tags`
 
 ALTER TABLE `lylme_article`
   MODIFY `art_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章ID';
-
-ALTER TABLE `lylme_article`
-  ADD `art_author_uid` int(11) NOT NULL DEFAULT 0 COMMENT '投稿会员UID(0为管理员/系统)' AFTER `art_author`,
-  ADD KEY `idx_author_uid` (`art_author_uid`);
 
 ALTER TABLE `lylme_article_cat`
   MODIFY `cat_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID', AUTO_INCREMENT=2;
