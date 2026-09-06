@@ -134,7 +134,7 @@ try {
           <li class="nav-item<?php echo menu_active('group'); ?>"> <a href="./group.php"><i class="mdi mdi-folder"></i>分组管理</a></li>
           <li class="nav-item<?php echo menu_active('link'); ?>"> <a href="./link.php"><i class="mdi mdi-web"></i>链接管理</a></li>
           <li class="nav-item nav-item-has-subnav<?php echo menu_active('article', true); ?>">
-            <a href="javascript:void(0)"><i class="mdi mdi-note-multiple"></i>文章管理</a>
+            <a href="javascript:void(0)"><i class="mdi mdi-note-multiple"></i>博客管理</a>
             <ul class="nav nav-subnav">
 
               <li<?php echo $current_page === 'article_config.php' ? ' class="active"' : ''; ?>> <a href="./article_config.php">基础设置</a>
