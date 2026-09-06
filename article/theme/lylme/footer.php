@@ -27,6 +27,10 @@ $lylme_icp       = (string) lylme_opt($this, 'lylmeIcp', '');
                                     <?php _e('· Supports'); ?>
                                      <a href="https://typecho.org/" target="_blank" rel="noopener">Typecho</a>
                                      <?php _e('Themes'); ?>
+                                    &nbsp;·&nbsp;
+                                    <a href="<?php echo lylme_e(lylme_site_base($this)); ?>">
+                                        <i class="mdi mdi-compass-outline"></i> <?php _e('返回导航首页'); ?>
+                                    </a>
                                 <?php endif; ?>
                             </div>
                             <?php if ($lylme_icp !== ''): ?>

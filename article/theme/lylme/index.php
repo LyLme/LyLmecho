@@ -40,13 +40,6 @@ $lylme_showHero  = lylme_block_on($this, 'ShowHero') && $lylme_kind === 'index' 
                 <input type="text" name="s" placeholder="<?php _e('搜索感兴趣的内容...'); ?>">
                 <button type="submit"><?php _e('搜索'); ?></button>
             </form>
-            </div>
-            <div class="lylme-hero-aside">
-            <div class="lylme-hero-stats">
-                <span class="hs-item"><i class="mdi mdi-file-document-outline"></i><?php _e('文章'); ?> <b data-count="<?php echo intval($lylme_stats['posts']); ?>"><?php echo intval($lylme_stats['posts']); ?></b></span>
-                <span class="hs-item"><i class="mdi mdi-folder-outline"></i><?php _e('分类'); ?> <b data-count="<?php echo intval($lylme_stats['cats']); ?>"><?php echo intval($lylme_stats['cats']); ?></b></span>
-                <span class="hs-item"><i class="mdi mdi-comment-outline"></i><?php _e('评论'); ?> <b data-count="<?php echo intval($lylme_stats['comments']); ?>"><?php echo intval($lylme_stats['comments']); ?></b></span>
-            </div>
             <?php if (lylme_block_on($this, 'ShowCategories')): ?>
                 <?php \Widget\Metas\Category\Rows::alloc()->to($lylme_hcats); ?>
                 <?php if ($lylme_hcats->have()): ?>
@@ -59,6 +52,13 @@ $lylme_showHero  = lylme_block_on($this, 'ShowHero') && $lylme_kind === 'index' 
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
+            </div>
+            <div class="lylme-hero-aside">
+            <div class="lylme-hero-stats">
+                <span class="hs-item"><i class="mdi mdi-file-document-outline"></i><?php _e('文章'); ?> <b data-count="<?php echo intval($lylme_stats['posts']); ?>"><?php echo intval($lylme_stats['posts']); ?></b></span>
+                <span class="hs-item"><i class="mdi mdi-folder-outline"></i><?php _e('分类'); ?> <b data-count="<?php echo intval($lylme_stats['cats']); ?>"><?php echo intval($lylme_stats['cats']); ?></b></span>
+                <span class="hs-item"><i class="mdi mdi-comment-outline"></i><?php _e('评论'); ?> <b data-count="<?php echo intval($lylme_stats['comments']); ?>"><?php echo intval($lylme_stats['comments']); ?></b></span>
+            </div>
             </div>
         </div>
         <div class="lylme-hero-deco" aria-hidden="true">

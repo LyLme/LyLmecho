@@ -337,7 +337,7 @@ if (!isset($GLOBALS['version'])) {
 $cdnpublic = cdnpublic(isset($conf['cdnpublic']) ? $conf['cdnpublic'] : null);
 
 // 获取模板路径
-$template = isset($conf["template"]) ? $conf["template"] : 'default';
+$template = isset($conf["template"]) ? $conf["template"] : 'lylmeblog';
 $templatepath = './template/' . $template;
 
 // 检查模板目录是否存在

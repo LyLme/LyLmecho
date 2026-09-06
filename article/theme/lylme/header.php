@@ -204,7 +204,10 @@ $lylme_og_type   = $lylme_kind === 'single' ? 'article' : 'website';
                 <nav class="sidebar-main lylme-nav" role="navigation">
                     <ul class="nav nav-drawer">
                         <li class="nav-item<?php echo $lylme_kind === 'index' ? ' active' : ''; ?>">
-                            <a href="<?php echo lylme_e($lylme_home); ?>"><i class="mdi mdi-home-map-marker"></i><?php _e('首页'); ?></a>
+                            <a href="<?php echo lylme_e($lylme_home); ?>"><i class="mdi mdi-home-map-marker"></i><?php _e('博客首页'); ?></a>
+                        </li>
+                        <li class="nav-item lylme-nav-home">
+                            <a href="<?php echo lylme_e(lylme_site_base($this)); ?>"><i class="mdi mdi-compass-outline"></i><?php _e('上网导航'); ?></a>
                         </li>
                         <?php if (lylme_block_on($this, 'ShowCategories')): ?>
                             <?php \Widget\Metas\Category\Rows::alloc()->to($lylme_cats); ?>

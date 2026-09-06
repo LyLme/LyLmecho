@@ -145,7 +145,7 @@ INSERT INTO `lylme_config` (`id`, `k`, `v`, `description`) VALUES
 (12, 'keywords', '六零导航页,百度搜索,哔哩哔哩搜索,知乎搜索,六零导航,LyLme Spage,六零,LyLme,网站导航,上网导航', '网站关键词'),
 (13, 'logo', './assets/img/logo.png', '网站LOGO'),
 (14, 'md5pass', '1', '启用md5加密密码'),
-(15, 'template', 'default', '网站主题'),
+(15, 'template', 'lylmeblog', '网站主题'),
 (16, 'wztj', '', '自定义footer'),
 (17, 'tq', 'false', '天气显示开关(部分主题支持)'),
 (18, 'version', 'v5.0.0', '数据库版本号'),
