@@ -195,9 +195,9 @@ if ($isGuest && $flood > 0 && $ip !== '') {
     }
 }
 
-// 判断是否需要审核
+// 判断是否需要审核(管理员评论直接通过, 无需审核)
 $audit = intval(isset($conf['article_audit']) ? $conf['article_audit'] : 0) === 1;
-$comStatus = $audit ? 0 : 1;
+$comStatus = ($audit && !$isAdmin) ? 0 : 1;
 
 // 入库(值由 insert_array 统一转义)
 $insertData = [
@@ -237,7 +237,7 @@ if ($inserted) {
     }
 
     // 提交结果提示: 区分是否需要审核
-    $_SESSION['article_comment_flash'] = $audit
+    $_SESSION['article_comment_flash'] = $comStatus === 0
         ? '评论已提交，待管理员审核通过后显示'
         : '评论发表成功，感谢您的参与';
 } else {
@@ -245,4 +245,4 @@ if ($inserted) {
 }
 
 // 跳转回文章页
-article_redirect($artId, $audit ? '#comment-form' : '#comments');
+article_redirect($artId, $comStatus === 0 ? '#comment-form' : '#comments');
