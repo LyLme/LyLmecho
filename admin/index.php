@@ -23,6 +23,19 @@ function tjsj($tjname)
 		echo $tjname;
 	}
 }
+// 博客信息统计（文章/评论/分类/会员）
+$artrows = 0;
+$artcomrows = 0;
+$artcatrows = 0;
+$artmemberrows = 0;
+try {
+	$artrows = intval($DB->count("SELECT COUNT(*) FROM `lylme_article` WHERE `art_status` = 1"));
+	$artcomrows = intval($DB->count("SELECT COUNT(*) FROM `lylme_article_comment` WHERE `com_status` = 1"));
+	$artcatrows = intval($DB->count("SELECT COUNT(*) FROM `lylme_article_cat` WHERE `cat_status` = 1"));
+	$artmemberrows = intval($DB->count("SELECT COUNT(*) FROM `lylme_article_user`"));
+} catch (Exception $e) {
+	// 忽略错误
+}
 ?>
 <!--页面主要内容-->
 <main class="lyear-layout-content">
@@ -144,6 +157,56 @@ function tjsj($tjname)
 			</div>
 		<?php endif; ?>
 		<div class="row">
+			<div class="col-sm-6 col-lg-3">
+				<div class="card">
+					<div class="card-body clearfix">
+						<div class="float-end">
+							<p class="h6 m-t-0">文章数量</p>
+							<p class="h3 m-b-0 fa-1-5x"><?php tjsj($artrows);
+																	?></p>
+						</div>
+						<div class="float-start"> <span class="img-avatar img-avatar-48 bg-light"><i class="mdi mdi-note-multiple fa-1-5x"></i></span> </div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-lg-3">
+				<div class="card">
+					<div class="card-body clearfix">
+						<div class="float-end">
+							<p class="h6 m-t-0">评论数量</p>
+							<p class="h3 m-b-0 fa-1-5x"><?php tjsj($artcomrows);
+																	?></p>
+						</div>
+						<div class="float-start"> <span class="img-avatar img-avatar-48 bg-light"><i class="mdi mdi-comment-multiple-outline fa-1-5x"></i></span> </div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-lg-3">
+				<div class="card">
+					<div class="card-body clearfix">
+						<div class="float-end">
+							<p class="h6 m-t-0">文章分类</p>
+							<p class="h3 m-b-0 fa-1-5x"><?php tjsj($artcatrows);
+																	?></p>
+						</div>
+						<div class="float-start"> <span class="img-avatar img-avatar-48 bg-light"><i class="mdi mdi-folder-multiple-outline fa-1-5x"></i></span> </div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-lg-3">
+				<div class="card">
+					<div class="card-body clearfix">
+						<div class="float-end">
+							<p class="h6 m-t-0">博客会员</p>
+							<p class="h3 m-b-0 fa-1-5x"><?php tjsj($artmemberrows);
+																	?></p>
+						</div>
+						<div class="float-start"> <span class="img-avatar img-avatar-48 bg-light"><i class="mdi mdi-account-multiple fa-1-5x"></i></span> </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
 			<div class="col-lg-6">
 				<div class="card">
 					<div class="card-header">
@@ -171,11 +234,8 @@ function tjsj($tjname)
 			</div>
 			<ul class="list-group">
 				<li class="list-group-item">
-					<b>程序名称：</b>LyLmecho<i>[Powered By LyLme Spage]</i>
+					<b>程序名称：</b>六零导航博客(LyLmecho)
 				</li>
-				
-
-				
 				<li class="list-group-item">
 					<b>主程序版本：</b>v<?php echo VERSION ?> <a href="./update.php" target="_blank">检查更新</a>
 				</li>
@@ -222,7 +282,7 @@ function tjsj($tjname)
 					<b>项目作者：</b>六零 <a href="https://www.lylme.com/support/" target="_blank">捐赠作者</a>
 				</li>
 				<li class="list-group-item">
-					<b>项目地址：</b><a href="https://github.com/LyLme/LyLmecho" target="_blank">https://github.com/LyLme/LyLmecho</a>
+					<b>项目地址：</b><a href="https://github.com/LyLme/lylmecho" target="_blank">https://github.com/LyLme/lylmecho</a>
 				</li>
 			</ul>
 		</div>

@@ -84,6 +84,17 @@ try {
 } catch (Exception $e) {
   // 忽略错误
 }
+
+// 获取待审核评论数量
+$commentrows = 0;
+try {
+  $comment_result = $DB->query("SELECT * FROM `lylme_article_comment` WHERE `com_status` = 0");
+  if ($comment_result !== false && method_exists($DB, 'num_rows')) {
+    $commentrows = $DB->num_rows($comment_result);
+  }
+} catch (Exception $e) {
+  // 忽略错误
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -134,7 +145,11 @@ try {
           <li class="nav-item<?php echo menu_active('group'); ?>"> <a href="./group.php"><i class="mdi mdi-folder"></i>分组管理</a></li>
           <li class="nav-item<?php echo menu_active('link'); ?>"> <a href="./link.php"><i class="mdi mdi-web"></i>链接管理</a></li>
           <li class="nav-item nav-item-has-subnav<?php echo menu_active('article', true); ?>">
-            <a href="javascript:void(0)"><i class="mdi mdi-note-multiple"></i>博客管理</a>
+            <a href="javascript:void(0)"><i class="mdi mdi-note-multiple"></i>博客管理<?php
+              if ($commentrows > 0) {
+                echo ' <span class="applyrow">' . intval($commentrows) . '</span>';
+              }
+              ?></a>
             <ul class="nav nav-subnav">
 
               <li<?php echo $current_page === 'article_config.php' ? ' class="active"' : ''; ?>> <a href="./article_config.php">基础设置</a>
@@ -144,7 +159,11 @@ try {
               <li<?php echo $current_page === 'article.php' ? ' class="active"' : ''; ?>> <a href="./article.php">文章列表</a>
                 </li>
                 <li<?php echo $current_page === 'article_cat.php' ? ' class="active"' : ''; ?>> <a href="./article_cat.php">文章分类</a> </li>
-                  <li<?php echo $current_page === 'article_comment.php' ? ' class="active"' : ''; ?>> <a href="./article_comment.php">文章评论</a> </li>
+                  <li<?php echo $current_page === 'article_comment.php' ? ' class="active"' : ''; ?>> <a href="./article_comment.php">文章评论<?php
+                    if ($commentrows > 0) {
+                      echo ' <span class="applyrow">' . intval($commentrows) . '</span>';
+                    }
+                    ?></a> </li>
                     <li<?php echo $current_page === 'article_member.php' ? ' class="active"' : ''; ?>> <a href="./article_member.php">会员管理</a> </li>
                       </ul>
                       </li>

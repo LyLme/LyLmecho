@@ -44,6 +44,10 @@ $web_url = ($isHttps ? 'https://' : 'http://') . $host;
                     <th>前台地址</th>
                     <td><a href="../"><?php echo $web_url; ?></a></td>
                 </tr>
+                 <tr>
+                    <th>前台博客</th>
+                    <td><a href="../article"><?php echo $web_url; ?>/article</a></td>
+                </tr>
                 <tr>
                     <th>后台地址</th>
                     <td><a href="../admin"><?php echo $web_url; ?>/admin</a></td>
