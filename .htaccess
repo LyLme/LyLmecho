@@ -1,0 +1,11 @@
+RewriteEngine On
+#RewriteBase /
+
+# 站点静态页
+RewriteRule ^site-(\d+)\.html$ /site/index.php?id=$1
+RewriteRule ^sitemap.xml$ /site/sitemap.php
+
+# 文章模块前端重写
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^article/(.*)$ /article/index.php?rewrite=$1 [L,QSA]

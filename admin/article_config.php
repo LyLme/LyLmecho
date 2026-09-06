@@ -72,12 +72,12 @@ $urlStyles = array(
 
               <div class="form-group">
                 <label for="article_web_title">网站标题:</label>
-                <input type="text" class="form-control" id="article_web_title" name="article_web_title" placeholder="博客" value="<?php echo htmlspecialchars(isset($configs['article_web_title']) ? $configs['article_web_title'] : '博客', ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" class="form-control" id="article_web_title" name="article_web_title" placeholder="LyLmecho博客" value="<?php echo htmlspecialchars(isset($configs['article_web_title']) ? $configs['article_web_title'] : '博客', ENT_QUOTES, 'UTF-8'); ?>">
               </div>
 
               <div class="form-group">
                 <label for="article_web_description">副标题:</label>
-                <input type="text" class="form-control" id="article_web_description" name="article_web_description" placeholder="LyLme Spage Blog" value="<?php echo htmlspecialchars(isset($configs['article_web_description']) ? $configs['article_web_description'] : 'LyLme Spage Blog', ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" class="form-control" id="article_web_description" name="article_web_description" placeholder="" value="<?php echo htmlspecialchars(isset($configs['article_web_description']) ? $configs['article_web_description'] : 'LyLme Spage Blog', ENT_QUOTES, 'UTF-8'); ?>">
               </div>
 
               <div class="form-group">

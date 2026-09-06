@@ -1,0 +1,6 @@
+rewrite ^/site-(\d+)\.html$ /site/index.php?id=$1 last;
+rewrite ^/sitemap.xml$ /site/sitemap.php last;
+
+location /article/ {
+    try_files $uri $uri/ /article/index.php?rewrite=$uri&$args;
+}

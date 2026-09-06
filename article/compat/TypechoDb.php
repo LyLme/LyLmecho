@@ -566,7 +566,22 @@ class DbQuery
 
     public function where($condition, ...$params)
     {
-        $condition = (string) $condition;
+        $this->wheres[] = ['AND', $this->buildCondition((string) $condition, $params)];
+        return $this;
+    }
+
+    /** OR 连接的条件 (语义同 where, 组装时以 OR 与前一条连接) */
+    public function orWhere($condition, ...$params)
+    {
+        $this->wheres[] = ['OR', $this->buildCondition((string) $condition, $params)];
+        return $this;
+    }
+
+    /**
+     * 单条条件加工: 表前缀/列名映射 → 占位符绑定 → Typecho 枚举值翻译
+     */
+    protected function buildCondition($condition, array $params)
+    {
         // 替换 table.xxx. 前缀
         $condition = preg_replace('/table\.([a-z_]+)\./', '`$1`.', $condition);
         // 替换裸列名 (options 表)
@@ -600,9 +615,13 @@ class DbQuery
                 $condition = str_replace('`' . $from . '`', '`' . $to . '`', $condition);
             }
         } elseif ($this->isFields) {
-            // fields 表 WHERE 条件: 剥离 name=? 条件 (兼容占位符 ? 与字面量 '...' / "..."), cid→art_id
-            // 注意: 必须在占位符替换之前处理, 否则 UPDATE/DELETE 时 name='...' 会泄漏到 lylme_article
-            $condition = preg_replace("/`?name`?\s*=\s*(?:\?|'[^']*'|\"[^\"]*\")/i", '1 = 1', $condition);
+            // fields 表 WHERE 条件:
+            //   UPDATE/DELETE/INSERT 重写路径: 剥离 name=? 条件 (name 在 lylme_article 无对应列, 泄漏会 SQL 报错),
+            //     兼容占位符 ? 与字面量 '...' / "..."
+            //   SELECT 路径: 保留 name 条件, 由 buildFieldsQuery() 提取字段名后改写 (故仅非 select 时剥离)
+            if ($this->type !== 'select') {
+                $condition = preg_replace("/`?name`?\s*=\s*(?:\?|'[^']*'|\"[^\"]*\")/i", '1 = 1', $condition);
+            }
             $condition = preg_replace('/`?cid`?/', '`art_id`', $condition);
         } else {
             // 别名.列映射: c.created -> c.`art_time` (Printer 等主题常用)
@@ -651,8 +670,7 @@ class DbQuery
                 $condition = preg_replace("/`com_status`\s*=\s*'" . preg_quote($from, '/') . "'/i", '`com_status` = ' . $to, $condition);
             }
         }
-        $this->wheres[] = $condition;
-        return $this;
+        return $condition;
     }
 
     public function order($column, $dir = 'ASC')
@@ -795,7 +813,11 @@ class DbQuery
             $sql .= ' ' . $join;
         }
         if (!empty($this->wheres)) {
-            $sql .= ' WHERE ' . implode(' AND ', $this->wheres);
+            $where = '';
+            foreach ($this->wheres as $i => $w) {
+                $where .= ($i > 0 ? ' ' . $w[0] . ' ' : '') . $w[1];
+            }
+            $sql .= ' WHERE ' . $where;
         }
         if (!empty($this->groups)) {
             $sql .= ' GROUP BY ' . implode(',', $this->groups);
@@ -871,12 +893,14 @@ class DbQuery
         $fieldName = '';
         $remainingWheres = [];
         foreach ($this->wheres as $w) {
-            if (preg_match('/`?name`?\s*=\s*[\'"](\w+)[\'"]/', $w, $m)) {
+            $glue = $w[0];
+            $cond = $w[1];
+            if (preg_match('/`?name`?\s*=\s*[\'"](\w+)[\'"]/', $cond, $m)) {
                 $fieldName = $m[1];
             } else {
-                // 将 cid 映射为 art_id
-                $w = preg_replace('/`?cid`?/', '`art_id`', $w);
-                $remainingWheres[] = $w;
+                // 将 cid 映射为 art_id (select 路径可能已提前映射, 未命中亦无妨)
+                $cond = preg_replace('/`?cid`?/', '`art_id`', $cond);
+                $remainingWheres[] = [$glue, $cond];
             }
         }
 
@@ -913,7 +937,11 @@ class DbQuery
         $sql = 'SELECT ' . (is_array($cols) ? implode(', ', array_map(function($v) { return strpos($v, '`') === 0 ? $v : '`' . $v . '`'; }, (array) $cols)) : $cols);
         $sql .= ' FROM `lylme_article`';
         if (!empty($remainingWheres)) {
-            $sql .= ' WHERE ' . implode(' AND ', $remainingWheres);
+            $where = '';
+            foreach ($remainingWheres as $i => $w) {
+                $where .= ($i > 0 ? ' ' . $w[0] . ' ' : '') . $w[1];
+            }
+            $sql .= ' WHERE ' . $where;
         }
         if (!empty($this->orders)) {
             $sql .= ' ORDER BY ' . implode(',', $this->orders);
@@ -979,7 +1007,7 @@ class DbQuery
     protected function fieldsTargetColumn()
     {
         foreach ($this->wheres as $w) {
-            if (preg_match('/`?name`?\s*=\s*[\'"](\w+)[\'"]/', $w, $m)) {
+            if (preg_match('/`?name`?\s*=\s*[\'"](\w+)[\'"]/', $w[1], $m)) {
                 if (isset(Db::$fieldColumns[$m[1]])) {
                     return Db::$fieldColumns[$m[1]];
                 }
@@ -1119,10 +1147,24 @@ class DbQuery
         return "'" . $this->db->escape($value) . "'";
     }
 
+    /** 值引号(批量): 数组 → 'a','b' 形式, 用于 IN 展开 */
+    public function quoteValues(array $values)
+    {
+        return implode(', ', array_map(function ($value) {
+            return $this->quoteValue($value);
+        }, $values));
+    }
+
     /** 创建表达式对象 */
     public static function expression($value)
     {
         return new DbExpression($value);
+    }
+
+    /** 预编译: 参数已在 where() 就地绑定, 直接返回当前 SQL */
+    public function prepare()
+    {
+        return $this->__toString();
     }
 }
 

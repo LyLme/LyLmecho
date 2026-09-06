@@ -127,6 +127,82 @@ abstract class Widget
     public function __get($name) { return isset($this->row[$name]) ? $this->row[$name] : null; }
     public function __call($name, $args) { $value = isset($this->row[$name]) ? $this->row[$name] : ''; echo $value; return $this; }
     protected function param($name, $default = null) { return isset($this->parameter->$name) ? $this->parameter->$name : $default; }
+    public function __set($name, $value) { $this->row[$name] = $value; }
+    /** 魔术方法名大小写不敏感: __isSet 与 __isset 同义, 定义其一即可同时满足 isset() */
+    public function __isSet($name) { return isset($this->row[$name]); }
+    /** 遍历行解析模板占位符 {field} 并输出 */
+    public function parse($format)
+    {
+        while ($this->next()) {
+            $row = $this->row;
+            $search = [];
+            $replace = [];
+            foreach ($row as $k => $v) {
+                if (is_scalar($v)) {
+                    $search[] = '{' . $k . '}';
+                    $replace[] = (string) $v;
+                }
+            }
+            echo str_replace($search, $replace, (string) $format);
+        }
+    }
+    /** 加载并执行主题模板文件 */
+    public function template($file)
+    {
+        $path = \Compat\App::$themeDir . $file;
+        if (is_file($path)) {
+            include $path;
+        }
+    }
+    /** 批量压入多行 */
+    public function pushAll($values)
+    {
+        foreach ($values as $v) {
+            $this->push($v);
+        }
+        return $this;
+    }
+    /** 转数组: 无参返回全部堆栈, 传列名则取每行指定列 */
+    public function toArray($columns = null)
+    {
+        if ($columns === null) {
+            return $this->stack;
+        }
+        $result = [];
+        foreach ($this->stack as $row) {
+            $filtered = [];
+            foreach ((array) $columns as $col) {
+                $filtered[$col] = isset($row[$col]) ? $row[$col] : null;
+            }
+            $result[] = $filtered;
+        }
+        return $result;
+    }
+    /** 取多列值: 每行单列返回标量, 多列返回数组 */
+    public function toColumn($columns)
+    {
+        $result = [];
+        foreach ($this->stack as $row) {
+            $vals = [];
+            foreach ((array) $columns as $col) {
+                $vals[] = isset($row[$col]) ? $row[$col] : null;
+            }
+            $result[] = count($vals) === 1 ? $vals[0] : $vals;
+        }
+        return $result;
+    }
+    /** 行奇偶交替输出 */
+    public function alt($prev, $next) { echo $this->sequence % 2 ? $next : $prev; }
+    /** 条件交替输出 */
+    public function altBy($condition, $prev, $next) { echo $condition ? $next : $prev; }
+    /** 插件钩子句柄 (空对象, 可安全承接链式调用) */
+    public function pluginHandle($className = '') { return \Typecho\Widget\Helper\EmptyClass::getInstance(); }
+    /** 事件绑定 (空实现) */
+    public function on($event, $callback = null) { return $this; }
+    /** 带别名分配 */
+    public static function allocWithAlias($alias, $params = null) { return new static($params); }
+    /** 销毁别名 (空实现) */
+    public static function destroy($alias) {}
 }
 
 /** 未知 widget 占位对象 */
@@ -186,6 +262,28 @@ class Common
     public static function idnToUtf8($idn) { if (function_exists('idn_to_utf8')) { return idn_to_utf8((string) $idn); } return $idn; }
     public static function parseDate($format) { return new Date($format); }
     public static function rid() { return md5(uniqid(mt_rand(), true)); }
+    public static function init() {}
+    public static function error($message) { if (defined('DEBUG') && DEBUG) { error_log('[compat] Typecho\Common::error: ' . (string) $message); } return false; }
+    public static function filterSearchQuery($query) { $query = (string) $query; return htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); }
+    public static function buildUrl($type, $params = [], $prefix = null) { return \Typecho\Router::url($type, $params, $prefix); }
+    public static function hashValidate($data, $hash) { return is_string($hash) && hash_equals($hash, self::hash($data)); }
+    public static function timeToken($time = 0) { $time = intval($time ?: time()); return substr(md5(self::VERSION . $time), 0, 16); }
+    public static function timeTokenValidate($token, $time = 0) { return is_string($token) && hash_equals($token, self::timeToken($time)); }
+    public static function buildBackupBuffer($buffer) { return base64_encode(gzcompress((string) $buffer, 6)); }
+    public static function extractBackupBuffer($buffer) { $decoded = @gzuncompress(base64_decode((string) $buffer)); return $decoded === false ? (string) $buffer : $decoded; }
+    public static function checkSafeHost($host) { return is_string($host) && $host !== '' && (bool) preg_match('#^[a-zA-Z0-9._\-]+$#', $host); }
+    public static function isAppEngine() { return false; }
+    public static function mimeIconType($ext)
+    {
+        $map = ['jpg' => 'image', 'jpeg' => 'image', 'png' => 'image', 'gif' => 'image', 'webp' => 'image', 'svg' => 'image', 'bmp' => 'image', 'ico' => 'image',
+            'mp3' => 'audio', 'wav' => 'audio', 'ogg' => 'audio', 'flac' => 'audio', 'aac' => 'audio',
+            'mp4' => 'video', 'avi' => 'video', 'mkv' => 'video', 'mov' => 'video', 'wmv' => 'video', 'flv' => 'video', 'webm' => 'video',
+            'pdf' => 'pdf', 'zip' => 'zip', 'rar' => 'zip', '7z' => 'zip', 'gz' => 'zip', 'tar' => 'zip', 'bz2' => 'zip',
+            'doc' => 'word', 'docx' => 'word', 'xls' => 'excel', 'xlsx' => 'excel', 'csv' => 'excel', 'ppt' => 'ppt', 'pptx' => 'ppt',
+            'txt' => 'text', 'md' => 'text', 'php' => 'code', 'js' => 'code', 'css' => 'code', 'html' => 'code', 'htm' => 'code', 'json' => 'code', 'xml' => 'code'];
+        $ext = strtolower((string) $ext);
+        return isset($map[$ext]) ? $map[$ext] : 'file';
+    }
 }
 
 /** Typecho Cookie 类 */
@@ -405,6 +503,39 @@ class Plugin
         }
         return !empty(self::$handles[$component][$method]);
     }
+
+    /** 初始化 (空实现, 兼容调用) */
+    public static function init() {}
+
+    /** 启用插件 (转发 Compat\PluginManager, 持久化于 lylme_article_config) */
+    public static function activate($name) { return \Compat\PluginManager::activate($name); }
+
+    /** 停用插件 */
+    public static function deactivate($name) { return \Compat\PluginManager::deactivate($name); }
+
+    /** 解析插件文件顶部元信息 */
+    public static function parseInfo($file) { return \Compat\PluginManager::parseInfo($file); }
+
+    /** 插件门户 (空实现, 管理后台入口) */
+    public static function portal() {}
+
+    /** 版本依赖检查 (兼容层接受任意版本) */
+    public static function checkDependence($version = '') { return true; }
+
+    /** 旧式触发接口: 等价于 export() */
+    public static function trigger($component, $method = null, ...$args)
+    {
+        return self::export($component, $method, ...$args);
+    }
+
+    /** 旧式调用接口: 等价于 export() */
+    public static function call($component, $method = null, $args = [])
+    {
+        return self::export($component, $method, ...(is_array($args) ? $args : [$args]));
+    }
+
+    /** 回调过滤 (透传, 保持链式兼容) */
+    public static function filter($value) { return $value; }
 }
 
 /** Typecho 请求对象 */
@@ -452,6 +583,59 @@ class Request
             default: return $current === $type;
         }
     }
+
+    /** @var array 沙箱/代理数据栈 */
+    protected $sandboxStack = [];
+
+    /** 进入沙箱: 以指定数据叠加当前请求参数 (beginSandbox/endSandbox 成对使用) */
+    public function beginSandbox(array $sandbox = [])
+    {
+        $this->sandboxStack[] = $this->params;
+        $this->params = array_merge($this->params, $sandbox);
+        return $this;
+    }
+
+    /** 退出沙箱: 恢复进入前的参数 */
+    public function endSandbox()
+    {
+        if ($this->sandboxStack) {
+            $this->params = array_pop($this->sandboxStack);
+        }
+        return $this;
+    }
+
+    /** 代理请求参数 (proxy/endProxy 成对使用) */
+    public function proxy($params = null)
+    {
+        $this->sandboxStack[] = $this->params;
+        if ($params === null) {
+            $this->params = array_merge($_POST, $_GET);
+        } elseif (is_array($params)) {
+            $this->params = $params;
+        }
+        return $this;
+    }
+
+    /** 结束代理, 恢复原参数 */
+    public function endProxy()
+    {
+        return $this->endSandbox();
+    }
+
+    /** 站点根地址 (协议://主机) */
+    public function getRequestRoot()
+    {
+        return $this->getUrlPrefix();
+    }
+
+    /** 基于当前请求拼接绝对 URI */
+    public function makeUriByRequest($requestUri = null)
+    {
+        if ($requestUri === null) {
+            $requestUri = $this->getRequestUri();
+        }
+        return $this->getRequestRoot() . (string) $requestUri;
+    }
 }
 
 /** Typecho 校验类 */
@@ -488,6 +672,9 @@ class Response
     protected $headers = [];
     protected $charset = 'UTF-8';
     protected $contentType = 'text/html';
+    protected $autoSendHeaders = true;
+    protected $responders = [];
+    protected $sandboxBodies = [];
 
     public static function getInstance() { if (!(self::$instance instanceof self)) { self::$instance = new self(); } return self::$instance; }
     public function setStatus($status) { $this->status = intval($status); return $this; }
@@ -496,20 +683,68 @@ class Response
     public function setContentType($type) { $this->contentType = (string) $type; return $this; }
     public function getCharset() { return $this->charset; }
     public function setCharset($charset) { $this->charset = (string) $charset; return $this; }
-    public function respond($data = null) { if (!headers_sent()) { header('Content-Type: ' . $this->contentType . '; charset=' . $this->charset); foreach ($this->headers as $key => $value) { header($key . ': ' . $value); } } if ($data !== null) { if (is_array($data) || is_object($data)) { echo json_encode($data); } else { echo $data; } } }
+    /** 是否在 respond() 时自动发送头部 */
+    public function enableAutoSendHeaders($enabled = true) { $this->autoSendHeaders = (bool) $enabled; return $this; }
+    /** 发送已缓存的状态/头部 (受 headers_sent 保护) */
+    public function sendHeaders()
+    {
+        if (!headers_sent()) {
+            header('Content-Type: ' . $this->contentType . '; charset=' . $this->charset);
+            foreach ($this->headers as $key => $value) {
+                header($key . ': ' . $value);
+            }
+        }
+    }
+    /** 清空已设置的状态/头部/响应器, 恢复默认 */
+    public function clean()
+    {
+        $this->status = 200;
+        $this->headers = [];
+        $this->contentType = 'text/html';
+        $this->responders = [];
+        return $this;
+    }
+    /** 注册输出响应器 (respond() 时逐个回调, 形如 function (Response $r) {}) */
+    public function addResponder($responder) { $this->responders[] = $responder; return $this; }
+    /** 进入输出沙箱: 后续 echo 内容进入缓冲区 */
+    public function beginSandbox() { ob_start(); return $this; }
+    /** 退出输出沙箱: 收集缓冲内容存入 sandboxBodies */
+    public function endSandbox() { $this->sandboxBodies[] = ob_get_clean(); return $this; }
+    /** 取沙箱收集的缓冲内容 */
+    public function getSandboxBodies() { return $this->sandboxBodies; }
+    public function respond($data = null)
+    {
+        foreach ($this->responders as $responder) {
+            if (is_callable($responder)) {
+                call_user_func($responder, $this);
+            }
+        }
+        if ($this->autoSendHeaders) {
+            $this->sendHeaders();
+        }
+        if ($data !== null) {
+            if (is_array($data) || is_object($data)) {
+                echo json_encode($data);
+            } else {
+                echo $data;
+            }
+        }
+    }
 }
 
-/** Typecho Feed 聚合类 (最小实现, 降级为空输出) */
+/** Typecho Feed 聚合类 (按 RSS1/RSS2/Atom 渲染) */
 class Feed
 {
     const RSS1 = 'RSS 1.0';
     const RSS2 = 'RSS 2.0';
     const ATOM1 = 'Atom 1.0';
+    const ATOM03 = 'Atom 0.3';
     protected $type = self::RSS2;
     protected $title = '';
     protected $subTitle = '';
     protected $feedUrl = '';
     protected $baseUrl = '';
+    protected $dateFormat = 'Y-m-d H:i:s';
     protected $items = [];
 
     public function __construct($type = self::RSS2) { $this->type = $type; }
@@ -517,24 +752,136 @@ class Feed
     public function setTitle($title) { $this->title = (string) $title; return $this; }
     public function setSubTitle($subTitle) { $this->subTitle = (string) $subTitle; return $this; }
     public function setFeedUrl($url) { $this->feedUrl = (string) $url; return $this; }
+    public function getFeedUrl() { return $this->feedUrl; }
     public function setBaseUrl($url) { $this->baseUrl = (string) $url; return $this; }
+    public function dateFormat($format) { $this->dateFormat = (string) $format; return $this; }
     public function addItem($item) { $this->items[] = $item; return $this; }
     public function getItems() { return $this->items; }
-    public function __toString() { return ''; }
+    /** XML 转义 */
+    protected function esc($str) { return htmlspecialchars((string) $str, ENT_QUOTES | ENT_XML1, 'UTF-8'); }
+    protected function itemLink($item) { return isset($item['link']) ? $item['link'] : (isset($item['permalink']) ? $item['permalink'] : $this->baseUrl); }
+    protected function itemDate($item)
+    {
+        if (empty($item['date'])) {
+            return 0;
+        }
+        return is_numeric($item['date']) ? intval($item['date']) : strtotime((string) $item['date']);
+    }
+    protected function itemDesc($item)
+    {
+        $content = isset($item['content']) ? $item['content']
+            : (isset($item['excerpt']) ? $item['excerpt']
+            : (isset($item['description']) ? $item['description'] : ''));
+        return trim(preg_replace('/\s+/', ' ', strip_tags((string) $content)));
+    }
+    public function __toString()
+    {
+        $title = $this->esc($this->title);
+        $link = $this->esc($this->feedUrl !== '' ? $this->feedUrl : $this->baseUrl);
+        $desc = $this->esc($this->subTitle);
+
+        if ($this->type === self::RSS1) {
+            $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+                . '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">' . "\n"
+                . '<channel rdf:about="' . $link . '">' . "\n"
+                . '<title>' . $title . '</title>' . "\n"
+                . '<link>' . $link . '</link>' . "\n"
+                . '<description>' . $desc . '</description>' . "\n"
+                . '<items><rdf:Seq>';
+            $itemXml = '';
+            foreach ($this->items as $item) {
+                $itemLink = $this->esc($this->itemLink($item));
+                $out .= '<rdf:li resource="' . $itemLink . '"/>';
+                $itemXml .= '<item rdf:about="' . $itemLink . '">' . "\n"
+                    . '<title>' . $this->esc(isset($item['title']) ? $item['title'] : '') . '</title>' . "\n"
+                    . '<link>' . $itemLink . '</link>' . "\n"
+                    . '<description>' . $this->esc($this->itemDesc($item)) . '</description>' . "\n";
+                $date = $this->itemDate($item);
+                if ($date) {
+                    $itemXml .= '<dc:date>' . date('c', $date) . '</dc:date>' . "\n";
+                }
+                $itemXml .= '</item>' . "\n";
+            }
+            return $out . '</rdf:Seq></items>' . "\n" . '</channel>' . "\n" . $itemXml . '</rdf:RDF>';
+        }
+
+        if ($this->type === self::ATOM1 || $this->type === self::ATOM03) {
+            $ns = $this->type === self::ATOM1
+                ? '<feed xmlns="http://www.w3.org/2005/Atom">'
+                : '<feed xmlns="http://purl.org/atom/ns#" version="0.3">';
+            $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $ns . "\n"
+                . '<title>' . $title . '</title>' . "\n"
+                . '<link href="' . $link . '"/>' . "\n"
+                . '<id>' . $link . '</id>' . "\n"
+                . '<subtitle>' . $desc . '</subtitle>' . "\n";
+            foreach ($this->items as $item) {
+                $itemLink = $this->esc($this->itemLink($item));
+                $itemDate = $this->itemDate($item);
+                $out .= '<entry>' . "\n"
+                    . '<title>' . $this->esc(isset($item['title']) ? $item['title'] : '') . '</title>' . "\n"
+                    . '<link href="' . $itemLink . '"/>' . "\n"
+                    . '<id>' . $itemLink . '</id>' . "\n"
+                    . ($itemDate ? '<updated>' . date('c', $itemDate) . '</updated>' . "\n" : '')
+                    . '<summary>' . $this->esc($this->itemDesc($item)) . '</summary>' . "\n"
+                    . '</entry>' . "\n";
+            }
+            return $out . '</feed>';
+        }
+
+        // 默认 RSS 2.0
+        $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . '<rss version="2.0"><channel>' . "\n"
+            . '<title>' . $title . '</title>' . "\n"
+            . '<link>' . $link . '</link>' . "\n"
+            . '<description>' . $desc . '</description>' . "\n";
+        foreach ($this->items as $item) {
+            $itemLink = $this->esc($this->itemLink($item));
+            $itemDate = $this->itemDate($item);
+            $out .= '<item>' . "\n"
+                . '<title>' . $this->esc(isset($item['title']) ? $item['title'] : '') . '</title>' . "\n"
+                . '<link>' . $itemLink . '</link>' . "\n"
+                . '<guid>' . $itemLink . '</guid>' . "\n"
+                . ($itemDate ? '<pubDate>' . date('r', $itemDate) . '</pubDate>' . "\n" : '')
+                . '<description>' . $this->esc($this->itemDesc($item)) . '</description>' . "\n"
+                . '</item>' . "\n";
+        }
+        return $out . '</channel></rss>';
+    }
 }
 
-/** Typecho 国际化类 (直接返回原文) */
+/** Typecho 国际化类 (基于翻译表, 未命中返回原文) */
 class I18n
 {
     protected static $lang = 'zh_CN';
     protected static $instance;
+    protected static $translations = [];
 
     public static function getInstance() { if (!(self::$instance instanceof self)) { self::$instance = new self(); } return self::$instance; }
     public static function setLang($lang) { self::$lang = $lang; }
     public static function getLang() { return self::$lang; }
-    public function translate($string) { return $string; }
-    public function e($string) { echo $string; }
-    public function n($single, $plural, $count) { return $count == 1 ? $single : $plural; }
+    /** 载入翻译: 传数组直接合并, 传语言文件路径则 include (需返回数组) */
+    public static function addLang($lang)
+    {
+        if (is_array($lang)) {
+            self::$translations = array_merge(self::$translations, $lang);
+        } elseif (is_string($lang) && is_file($lang)) {
+            $loaded = @include $lang;
+            if (is_array($loaded)) {
+                self::$translations = array_merge(self::$translations, $loaded);
+            }
+        }
+        return true;
+    }
+    public function translate($string) { return isset(self::$translations[$string]) ? self::$translations[$string] : $string; }
+    public function e($string) { echo $this->translate($string); }
+    public function n($single, $plural, $count) { return intval($count) == 1 ? $single : $plural; }
+    public function ngettext($single, $plural, $count) { return $this->n($single, $plural, $count); }
+    /** 友好日期词 ("x 天前", 超出范围回落为给定日期格式) */
+    public function dateWord($time, $format = 'Y-m-d H:i:s')
+    {
+        $word = (new Date($time))->word();
+        return $word;
+    }
     public function setLocale($locale) {}
     public function getLocale() { return self::$lang; }
     public function isAvailable($locale) { return false; }
@@ -641,6 +988,28 @@ class Form
     public function setMethod($method) { $this->method = (string) $method; return $this; }
     public function setEncodeType($type) { $this->encodeType = (string) $type; return $this; }
     public function getValues() { $values = []; foreach ($this->items as $item) { $values[$item->getName()] = $item->getValue(); } return $values; }
+    /** 合并请求参数 (校验/回填场景) */
+    public function getAllRequest() { return array_merge($_GET, $_POST); }
+    /** 返回表单元素列表 (仅 AbstractElement 实例) */
+    public function getInputs()
+    {
+        $inputs = [];
+        foreach ($this->items as $item) {
+            if ($item instanceof \Typecho\Widget\Helper\Form\Element\AbstractElement) {
+                $inputs[] = $item;
+            }
+        }
+        return $inputs;
+    }
+    /** 返回元素 name => value 参数表 */
+    public function getParams()
+    {
+        $params = [];
+        foreach ($this->getInputs() as $input) {
+            $params[$input->getName()] = $input->getValue();
+        }
+        return $params;
+    }
     public function validate() { return []; }
     public function render() { echo '<form action="' . htmlspecialchars($this->action) . '" method="' . $this->method . '" enctype="' . $this->encodeType . '">'; foreach ($this->items as $item) { echo '<div class="typecho-option"><label class="typecho-label">' . htmlspecialchars($item->getLabel()) . '</label><input type="' . $item->type . '" name="' . htmlspecialchars($item->getName()) . '" value="' . htmlspecialchars((string) $item->getValue()) . '" />'; if ($item->getDescription()) { echo '<p class="description">' . htmlspecialchars($item->getDescription()) . '</p>'; } echo '</div>'; } echo '</form>'; }
 }
@@ -722,6 +1091,9 @@ abstract class AbstractElement
     public $type = 'text';
     public $rules = [];
     public $multiMode = false;
+    public $container;
+    public $message = '';
+    public $multiline = false;
 
     /**
      * 输入框布局对象 (Typecho 原生属性)
@@ -750,6 +1122,34 @@ abstract class AbstractElement
     public function label($val = null) { if ($val !== null) { $this->label = $val; return $this; } return $this->label; }
     public function value($val = null) { if ($val !== null) { $this->value = $val; return $this; } return $this->value; }
     public function description($val = null) { if ($val !== null) { $this->description = $val; return $this; } return $this->description; }
+    public function init() {}
+    public function container($container = null)
+    {
+        if ($container !== null) {
+            $this->container = ($container instanceof \Typecho\Widget\Helper\Layout)
+                ? $container
+                : new \Typecho\Widget\Helper\Layout((string) $container);
+            return $this;
+        }
+        return $this->container;
+    }
+    public function message($message = null)
+    {
+        if ($message !== null) {
+            $this->message = $message;
+            return $this;
+        }
+        return $this->message;
+    }
+    public function multiline($multiline = true) { $this->multiline = (bool) $multiline; return $this; }
+    public function setInputsAttribute($name, $value)
+    {
+        if ($this->input instanceof \Typecho\Widget\Helper\Layout) {
+            $this->input->setAttribute($name, $value);
+        }
+        return $this;
+    }
+    public function inputValue($value) { return $value; }
 }
 
 class Text extends AbstractElement { public $type = 'text'; }

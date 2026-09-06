@@ -1,263 +1,185 @@
-# 六零导航页 LyLme Spage
+# LyLmecho
 
 <p align="center">
-  <a href="https://github.com/LyLme/lylme_spage/releases"><img src="https://img.shields.io/github/v/release/LyLme/lylme_spage?label=version&cacheSeconds=3600" alt="Version"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-green" alt="License"></a>
-  <a href="https://gitee.com/LyLme/lylme_spage"><img src="https://img.shields.io/badge/Gitee-LyLme%2Flylme__spage-red" alt="Gitee"></a>
-  <a href="https://github.com/LyLme/lylme_spage"><img src="https://img.shields.io/badge/GitHub-LyLme%2Flylme__spage-black" alt="GitHub"></a>
-  <img src="https://img.shields.io/badge/PHP-%3E%3D5.6-purple" alt="PHP">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-orange" alt="License"></a>
+  <img src="https://img.shields.io/badge/PHP-%3E%3D7.0-purple" alt="PHP">
   <img src="https://img.shields.io/badge/MySQL-%3E%3D5.6-orange" alt="MySQL">
+  <img src="https://img.shields.io/badge/基于-LyLme%20Spage-4f7cf7" alt="基于 LyLme Spage">
 </p>
 
-> 致力于简洁高效无广告的上网导航和搜索入口，支持后台管理、多模板切换与自定义搜索引擎，全站无商业推广，简约而不简单。
+> **LyLmecho** 是导航页 **六零导航页 / LyLme Spage** 的**一个独立全新版本（独立仓库）**。它在完整保留六零导航页(LyLme Spage)能力的基础上，**主要新增了一套完整的「文章 / 博客」模块**，并为文章模块实现了 **Typecho 主题兼容层**，使 Typecho 生态的主题无需修改即可直接运行——导航与博客二合一，简约而不简单。
 
-**演示站点**：<https://hao.lylme.com> &nbsp;|&nbsp; **项目文档**：<https://doc.lylme.com/spage>
+---
 
-## 快速开始
+## 功能特性
 
-### 常规安装（推荐）
+### 源自六零导航页（导航能力，完整保留）
 
-1. 前往 [Gitee Releases](https://gitee.com/LyLme/lylme_spage/releases) 或 [GitHub Releases](https://github.com/LyLme/lylme_spage/releases) 下载最新版本源码压缩包，上传至网站根目录解压
-2. 访问 `http://域名/install`，按提示配置数据库完成安装
-3. 后台地址：`http://域名/admin`，默认账号密码：`admin` / `123456`
+- 多搜索引擎切换，后台可自定义增删与排序
+- 分组导航：分组排序、分组/链接加密访问
+- 在线收录申请：验证码 + 限流防护，后台审核
+- 详情页模式：直接跳转 / 详情页两种运行模式，自动采集站点信息
+- Bing 每日壁纸、随机一言、响应式多模板切换
+- 完善的 WAF / CSRF / SSRF / 限流 / 文件校验等安全防护
+- 后台链接、分组、搜索、主题、菜单、收录、账号安全等全套管理
 
-### Docker 部署
+### 新增：文章 / 博客模块（`article/`）
 
-一条命令完成部署，开箱即用，自动配置并导入数据库：
+| 能力 | 说明 |
+| --- | --- |
+| **文章发布** | 标题、分类、别名（slug）、封面、摘要、正文、SEO、发布时间、置顶、草稿/发布/待审三态 |
+| **编辑器** | Vditor 富文本编辑器编写，保存 Markdown 源码，前台自动渲染（内置自包含 `Markdown` 渲染器） |
+| **独立页面** | 支持「关于本站」等单页，前台 `?page=slug` / 伪静态 `/page/{slug}.html`，参与导航菜单 |
+| **评论系统** | 三态开关（关闭 / 免登录 / 仅登录）、评论审核、嵌套回复、管理员回复、计数同步、提交限流与防刷 |
+| **订阅输出** | 内置 RSS 2.0 / Atom / 评论订阅三种 feed 端点 |
+| **URL 链接风格** | 5 种风格（default / post_id / id / slug / custom 自定义模板），前后台实时预览，伪静态规则一键复制 |
+| **前台会员体系** | 自助注册、邮箱验证（内置自包含 SMTP 发信）、登录/个人中心、记住登录、暴破限流 |
+| **投稿工作流** | `subscriber` / `contributor` / `editor` 三级角色，前台投稿 → 待审 → 编辑审核发布，全程权限隔离 |
+| **主题系统** | `article/theme/` 多主题切换 + 自定义配置表单 |
+| **Typecho 插件** | 兼容 Typecho 插件钩子体系，后台可启用/禁用/配置插件 |
 
-```bash
-docker run -d -p 8080:80 -v lylme_mysql:/var/lib/mysql -v lylme_www:/var/www/html --name lylme_spage lylme/lylme_spage
-```
-#### 国内镜像加速
-```bash
-docker run -d -p 8080:80 -v lylme_mysql:/var/lib/mysql -v lylme_www:/var/www/html --name lylme_spage docker.1ms.run/lylme/lylme_spage:latest
-```
-| 项目     | 地址                          |
-| -------- | ----------------------------- |
-| 前台     | <http://localhost:8080>       |
-| 后台     | <http://localhost:8080/admin> |
-| 默认账号 | `admin`                       |
-| 默认密码 | `123456`                      |
+### 核心亮点：Typecho 主题兼容层（`article/compat/`）
 
+文章模块并非自建一套模板接口，而是实现了一个 **Typecho 兼容层**（约 16 个文件，覆盖 `Widget/Archive/Options/Db/Helper/Request/Form` 等 Typecho 主题常用 API），因此：
 
+- 绝大多数 **Typecho 主题可直接放入 `article/theme/` 并后台一键切换**，无需改动
+- 兼容 `index.php / post.php / page.php / comments.php / sidebar.php / functions.php` 等主题文件约定
+- 内置 `lylme` 默认主题，开箱即用
+- 详细实现与覆盖度说明见 [Typecho 兼容层对照与 API 清单](article/Typecho兼容层对照与API清单.md)
 
-详细的 Docker 部署、数据持久化、备份恢复、反向代理等内容请参阅 [Docker.md](Docker.md)。
-
-### 环境要求
+## 环境要求
 
 | 组件 | 要求 |
-|------|------|
-| PHP | >= 5.6（支持 5.x / 7.x / 8.x） |
+| --- | --- |
+| PHP | 导航内核 >= 5.6；**文章模块 / 兼容层要求 >= 7.0**（推荐 7.4 / 8.x） |
 | MySQL | >= 5.6（推荐 5.7+） |
 | Web 服务器 | Apache / Nginx |
 
 **PHP 扩展**：mysqli、pdo_mysql、gd、curl、mbstring、xml、zip
 
-## 功能特性
+## 快速开始
 
-### 前台
+### 全新安装
 
-- **多搜索引擎切换** — 内置多个常用搜索引擎，后台可自定义增删与排序
-- **分组导航** — 链接按分组展示，支持分组排序、加密访问
-- **收录申请** — 用户可在线提交网站收录申请，支持验证码与限流防护
-- **详情页模式** — 支持直接跳转与详情页两种运行模式，详情页自动采集站点信息
-- **响应式设计** — 适配 PC 与移动端，支持独立手机端背景
-- **Bing 每日壁纸** — 支持通过 CRON 定时抓取 Bing 每日一图作为背景
-- **随机一言** — 可选的随机一言展示
+1. 将项目源码上传至网站根目录
+2. 访问 `http://域名/install`，按提示配置数据库完成安装
+3. 后台地址：`http://域名/admin`，默认账号密码：`admin` / `123456`
+4. 进入后台「文章 → 模块配置」，开启「文章模块开关」，即可开始写文章
 
-### 后台
+### 从既有六零导航页升级
 
-- **网站设置** — 标题、Logo、背景、SEO 关键词/描述、备案号、版权信息、自定义 Footer 等
-- **链接管理** — 增删改查、批量导入、批量操作（启用/禁用/移动/加密/删除）、失效检测
-- **分组管理** — 分组增删改查、拖拽排序、分组加密
-- **搜索引擎管理** — 搜索引擎的增删改查与排序
-- **主题管理** — 内置多套主题模板，后台一键切换，支持主题自定义设置
-- **收录审核** — 查看用户提交的收录申请，支持通过/拒绝/删除
-- **导航菜单** — 顶部导航菜单的自定义管理
-- **加密管理** — 链接/分组密码保护，支持多密码组
-- **文件清理** — 图片快速清理
-- **账号安全** — 修改管理员账号密码、后台目录自定义、调试模式开关
+已部署 LyLme Spage 的站点，接入文章模块只需两步：
 
-### 安全防护
+1. 用 `install/data/install_struct.sql` 中新增的建表语句，补齐文章模块所需的 6 张数据表
+2. 将程序文件升级到本分支（`include/version.php` 版本号抬升后，访问任意页面会自动触发 `include/updbase.php` 增量升级）
 
-| 防护层 | 说明 |
-|--------|------|
-| WAF 防护 | SQL 注入、XSS、命令注入等常见攻击检测 |
-| CSRF 防护 | 表单 CSRF Token 生成与验证 |
-| SSRF 防护 | 禁止访问内网 IP 等不安全资源 |
-| 限流机制 | API 请求频率限制，防止滥用 |
-| 验证码 | 收录申请等场景的图形验证码 |
-| 文件校验 | 核心文件完整性校验，检测篡改 |
-| 密码加密 | 管理员密码 MD5 加密存储，链接/分组密码访问 |
+### 伪静态
 
-## 前台截图
+- `.htaccess`（Apache）与 `nginx.htaccess`（Nginx）均已内置文章模块的伪静态规则
+- 在后台「文章 → 模块配置 → 链接设置」选择 URL 风格后，Apache 开启 Rewrite 即可；Nginx 请参照 `nginx.htaccess` 中的注释把规则加入站点配置
 
-<table>
-  <tr>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/default主题.png" alt="default主题"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/LTAB主题.png" alt="LTAB主题"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/详情页.png" alt="详情页"></td>
-  </tr>
-</table>
+## 目录结构
 
-<details>
-<summary>更多前台截图</summary>
-
-<table>
-  <tr>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/baisu主题.png" alt="baisu主题"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/DashLite主题.png" alt="DashLite主题"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/申请收录页面.png" alt="申请收录页面"></td>
-  </tr>
-</table>
-</details>
-
-## 后台截图
-
-<table>
-  <tr>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/后台首页.png" alt="后台首页"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/后台链接管理页.png" alt="后台链接管理页"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/后台多主题选择.png" alt="后台多主题选择"></td>
-  </tr>
-</table>
-
-<details>
-<summary>更多后台截图</summary>
-
-<table>
-  <tr>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/后台搜素引擎自定义.png" alt="后台搜素引擎自定义"></td>
-    <td><img src="https://cdn.lylme.com/img/lylme_spage/后台批量导入链接和收藏夹导入.png" alt="后台批量导入链接和收藏夹导入"></td>
-  </tr>
-</table>
-</details>
-
-## 背景设置
-
-六零导航页支持使用 Bing 每日一图作为背景，接口地址为 `/assets/img/bing.php`。但直接调用 `bing.php` 不会产生缓存，影响后续加载速度。
-
-**缓存方案**：修改 `/assets/img/cron.php` 配置密钥，添加每天执行的 CRON 任务：
+在六零导航页（LyLme Spage）既有结构之上，本仓库（独立版本）**主要新增/改动**如下：
 
 ```
-GET http://域名/assets/img/cron.php
+LyLmecho/
+├── index.php                 # 前台导航入口（上游）
+├── admin/                    # 后台管理
+│   ├── article.php           #   文章 / 独立页面管理（Vditor 编辑器）
+│   ├── article_cat.php       #   文章分类管理
+│   ├── article_comment.php   #   评论管理（审核 / 回复时间轴）
+│   ├── article_config.php    #   文章模块配置（基本/会员/邮件/链接 四个 Tab）
+│   ├── article_theme.php     #   文章主题管理
+│   ├── article_plugin.php    #   Typecho 插件管理
+│   ├── article_member.php    #   前台会员管理
+│   ├── ajax_article.php      #   文章模块统一 AJAX 接口
+│   └── head.php              #   后台公共头部（侧边栏已挂「文章」菜单）
+├── article/                  # ★ 文章 / 博客模块
+│   ├── index.php             #   前台入口 + 路由分发
+│   ├── common.php            #   公共初始化（加载核心 + 兼容层）
+│   ├── comment.php           #   评论提交处理
+│   ├── feed.php              #   RSS 2.0 / Atom / 评论订阅
+│   ├── member.php            #   前台会员：登录 / 注册 / 个人中心
+│   ├── member_post.php       #   前台投稿（含草稿 / 预览）
+│   ├── member_moderate.php   #   编辑审核工作台（投稿 / 评论）
+│   ├── compat/               #   Typecho 兼容层（16 个文件）
+│   │   ├── bootstrap.php     #     兼容层加载入口（别名 / 常量 / 全局函数）
+│   │   ├── App.php           #     应用容器：主题目录、URL 重写、链接生成
+│   │   ├── Archive.php       #     Widget_Archive 主组件（主题中的 $this）
+│   │   ├── TypechoCompat.php #     Typecho 命名空间主兼容类
+│   │   ├── TypechoDb.php     #     Typecho 数据库兼容单例
+│   │   ├── Markdown.php      #     自包含 Markdown → HTML 渲染器
+│   │   ├── Mailer.php        #     自包含 SMTP 客户端
+│   │   ├── Member.php        #     会员核心类
+│   │   └── ...               #     Options / BaseWidget / User / Author /
+│   │                         #     Stat / CommentsWidget / SidebarWidgets /
+│   │                         #     PluginManager
+│   ├── theme/                #   文章主题（内置 lylme；放置任意 Typecho 主题可后台切换）
+│   ├── plugins/              #   Typecho 插件目录
+│   └── config/               #   主题 / 插件配置持久化（JSON）
+├── install/data/install_struct.sql  # 安装结构（含文章模块 6 张表）
+├── include/
+│   ├── version.php           # 版本号（v2.7.1）
+│   └── updbase.php           # 数据库升级脚本（含文章模块增量升级）
+├── .htaccess                 # Apache 伪静态（含文章模块规则）
+├── nginx.htaccess            # Nginx 伪静态（含文章模块规则）
+└── template/                 # 导航主题（上游，default / ltab / liquidglass 等）
 ```
 
-执行后 Bing 每日一图会保存到 `assets/img/background.jpg`，在后台将背景地址设为 `./assets/img/background.jpg` 即可。
+## 文章模块路由
 
-## 项目结构
+| 路由 | 说明 |
+| --- | --- |
+| `article/` 或 `?s=` | 文章首页 / 搜索 |
+| `?id=xx` / `?slug=xx` | 单篇文章（浏览量 +1，会话去重） |
+| `?cat=xx` | 分类列表（支持别名或 ID） |
+| `?month=YYYY-MM` | 按月归档 |
+| `?page=N` | 分页 |
+| `?page=slug` | 独立页面（slug 为非数字，避免与分页冲突） |
+| `?comment=xx`（POST） | 评论提交 |
+| `?feed=rss\|atom\|comments\|rdf` | 订阅输出 |
+| `?member=...` | 登录 / 注册 / 个人中心 / 投稿 / 审核 |
 
-```
-lylme_spage/
-├── index.php                # 前台入口
-├── config.php              # 数据库配置
-├── .htaccess               # Apache 伪静态规则
-├── nginx.htaccess          # Nginx 伪静态规则
-├── include/                # 核心代码
-│   ├── common.php          #   系统初始化
-│   ├── include.php         #   模板渲染与公共元素
-│   ├── function.php        #   公共函数库
-│   ├── lists.php           #   列表渲染
-│   ├── site.php            #   SITE 类（数据操作 + WAF）
-│   ├── db.class.php        #   数据库类
-│   ├── member.php          #   管理员鉴权
-│   ├── go.php              #   链接跳转与密码验证
-│   ├── validatecode.php   #   验证码生成
-│   ├── file.php            #   文件上传处理
-│   ├── tj.php              #   访问统计
-│   ├── updbase.php         #   数据库升级
-│   ├── qrcode.php          #   二维码生成
-│   └── version.php         #   版本号定义
-├── admin/                  # 后台管理
-│   ├── index.php           #   仪表盘
-│   ├── set.php             #   网站设置
-│   ├── link.php            #   链接管理
-│   ├── group.php           #   分组管理
-│   ├── sou.php             #   搜索引擎管理
-│   ├── apply.php           #   收录审核
-│   ├── theme.php           #   主题管理
-│   ├── tag.php             #   导航菜单
-│   ├── pwd.php             #   加密组管理
-│   ├── user.php            #   账号安全
-│   ├── batch_add.php       #   批量导入
-│   ├── ajax_link.php       #   链接 AJAX 接口
-│   ├── ajax_apply.php     #   收录 AJAX 接口
-│   ├── ajax_theme.php      #   主题 AJAX 接口
-│   ├── filecheck.php       #   文件完整性校验
-│   ├── cleanimg.php        #   图片清理
-│   ├── cache.php           #   缓存管理
-│   ├── update.php          #   检查更新
-│   ├── wxplus.php          #   微信推送
-│   ├── license.php         #   授权管理
-│   ├── about.php           #   关于页面设置
-│   └── help.php            #   帮助文档
-├── apply/                  # 收录申请（前台）
-│   ├── index.php           #   申请页面
-│   ├── apply.js            #   前端交互脚本
-│   └── wxplus.php          #   微信推送通知
-├── site/                   # 站点服务
-│   ├── index.php           #   详情页入口
-│   ├── common.php          #   详情页公共逻辑
-│   ├── sitemap.php         #   XML 站点地图
-│   └── baidu_api.php       #   百度主动推送
-├── template/               # 主题模板
-│   ├── default/            #   默认主题
-│   ├── ***/                #   其他主题
-├── assets/                 # 静态资源
-│   ├── css/                #   前端样式
-│   ├── js/                #   前端脚本
-│   ├── img/               #   图片资源（含 Bing 每日一图接口）
-│   └── data/              #   随机一言数据
-├── install/                # 安装程序
-│   ├── index.php           #   安装入口
-│   ├── data/install_struct.sql  # 数据库结构
-│   └── templates/          #   安装向导模板
-├── files/                  # 上传文件
-├── about/                  # 关于页面
-├── pwd/                    # 密码访问入口
-└── logs/                   # 日志目录
-```
+> 文章地址受「链接风格」影响：启用伪静态后可呈现 `post1.html`、`1.html`、`hello-world.html` 等形态。
 
-## 数据表结构
+## 文章模块数据表
 
 | 数据表 | 说明 |
-|--------|------|
-| `lylme_config` | 网站配置（键值对存储所有可配置项） |
-| `lylme_links` | 导航链接 |
-| `lylme_groups` | 链接分组 |
-| `lylme_sou` | 搜索引擎配置 |
-| `lylme_apply` | 用户收录申请 |
-| `lylme_tags` | 顶部导航菜单 |
-| `lylme_pwd` | 加密访问密码组 |
+| --- | --- |
+| `lylme_article` | 文章（正文、分类、作者、封面、浏览量、评论数、置顶、状态、SEO 等） |
+| `lylme_article_cat` | 文章分类 |
+| `lylme_article_comment` | 评论（嵌套、审核、访客信息、绑定会员 UID） |
+| `lylme_article_page` | 独立页面 |
+| `lylme_article_config` | 模块配置（键值对：开关 / 主题 / 评论 / 会员 / SMTP / URL 风格等） |
+| `lylme_member` | 前台会员（bcrypt 密码、角色、状态、邮箱验证、可撤销 token） |
 
-## 相关链接
+## 相关文档
 
-| 项目 | 地址 |
-|------|------|
-| Gitee 仓库 | <https://gitee.com/LyLme/lylme_spage> |
-| GitHub 仓库 | <https://github.com/LyLme/lylme_spage> |
-| 演示站点 | <https://hao.lylme.com> |
-| 项目文档 | <https://doc.lylme.com/spage> |
-| 主题开发文档 | <http://doc.lylme.com/spage/#/dev> |
-| Docker 部署文档 | [Docker.md](Docker.md) |
-| 捐赠支持 | <https://www.lylme.com/support> |
+| 文档 | 说明 |
+| --- | --- |
+| [文章模块开发进度](article/开发进度.md) | 模块开发历程、决策记录与验证结果 |
+| [Typecho 兼容层对照与 API 清单](article/Typecho兼容层对照与API清单.md) | 兼容层 API 对照、覆盖度与缺口、降级说明 |
 
-## 鸣谢
+## 与主仓库（lylme_spage）的关系
 
-本项目的开发离不开以下开源项目的支持：
-
-- **[Bootstrap](https://getbootstrap.com/)** — 前端 UI 框架
-- **[jQuery](https://jquery.com/)** — JavaScript 库
-- **[Font Awesome](https://fontawesome.com/)** — 图标库
-- **[Viewer.js](https://github.com/fengyuanchen/viewerjs)** — 图片查看器
-- **[Layer](https://github.com/sentsin/layer)** — 弹层组件
-
-感谢所有为项目提交 Issue、PR 及反馈建议的用户。
+- **主仓库**：[六零导航页 LyLme Spage](https://github.com/LyLme/lylme_spage)仅包含导航页功能，**不含 Typecho / 文章模块代码**
+- **本仓库（LyLmecho）**：**独立的全新仓库**，相当于 LyLme Spage 的**另一个版本**（导航 + 博客增强线），在共用导航内核的基础上，新增文章 / 博客模块、前台会员体系与 Typecho 兼容层，独立维护、独立发布
+- 两仓库相互独立、互不影响：主仓库代码不涉及 Typecho；本仓库因集成 Typecho 代码而整体采用 GPL-2.0（见下方 License）
+- 导航功能效果可参考官方演示站 <https://hao.lylme.com>；文章模块以本仓库部署为准
 
 ## License
 
-[Apache License 2.0](LICENSE)
+LyLmecho 是一个独立的全新仓库，区别于主仓库 [lylme_spage](https://github.com/LyLme/lylme_spage)（后者不含 Typecho 相关代码）。由于本仓库的文章模块**集成了基于 Typecho 实现的 Typecho 兼容层**，而 Typecho 采用 [GPL-2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) 协议，故 **LyLmecho 整体以 GNU General Public License v2.0 对外分发**，完整许可文本见 [LICENSE](LICENSE)。主仓库及其中源码的许可不因本仓库而改变。
+
+**第三方代码致谢**：
+
+| 内容 | 代码范围 | 许可 |
+| --- | --- | --- |
+| [六零导航页 LyLme Spage](https://github.com/LyLme/lylme_spage) | 导航内核、后台框架、导航主题（同源） | [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) |
+| [Typecho](https://github.com/typecho/typecho) | 文章模块 Typecho 兼容层（`article/compat/`）及相关移植实现 | [GPL-2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) |
+| Bootstrap / jQuery / Font Awesome / Vditor 等 | 前端依赖库 | 各自的开源许可 |
 
 ---
 
-Copyright &copy; 2022-2026 LyLme Spage. All Rights Reserved.
+Copyright &copy; LyLmecho Contributors. 同源的 [LyLme Spage](https://github.com/LyLme/lylme_spage)（Apache-2.0）与 [Typecho](https://typecho.org)（GPL-2.0）版权归其各自作者所有。

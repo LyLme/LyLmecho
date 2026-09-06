@@ -31,7 +31,7 @@
                 </tr>
                 <tr>
                     <td height="26" class="firstCol">PHP 版本</td>
-                    <td>&ge;5.4</td>
+                    <td>&ge;7.2</td>
                     <td>8.2</td>
                     <td class="endCol"><?php echo PHP_VERSION; ?></td>
                 </tr>
