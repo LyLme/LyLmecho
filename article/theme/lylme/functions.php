@@ -87,10 +87,12 @@ if (!function_exists('themeConfig')) {
                 'ShowCategories'  => _t('侧栏分类'),
                 'ShowTags'        => _t('侧栏标签云'),
                 'ShowStats'       => _t('侧栏站点统计'),
+                'ShowPages'       => _t('侧栏独立页面'),
             ],
             [
                 'ShowHero', 'ShowCover', 'ShowToc',
                 'ShowHotPosts', 'ShowRecentComs', 'ShowCategories', 'ShowTags', 'ShowStats',
+                'ShowPages',
             ],
             _t('模块开关')
         );
@@ -336,6 +338,7 @@ if (!function_exists('lylme_blocks')) {
             $list = [
                 'ShowHero', 'ShowCover', 'ShowToc',
                 'ShowHotPosts', 'ShowRecentComs', 'ShowCategories', 'ShowTags', 'ShowStats',
+                'ShowPages',
             ];
         }
         $map = [];

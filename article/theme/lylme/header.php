@@ -227,6 +227,20 @@ $lylme_og_type   = $lylme_kind === 'single' ? 'article' : 'website';
                                 </li>
                             <?php endif; ?>
                         <?php endif; ?>
+                        <?php if (lylme_block_on($this, 'ShowPages')):
+                            \Widget\Contents\Page\Rows::alloc()->to($lylme_pages);
+                            $lylme_pageCur = isset($this->row['art_slug']) ? (string) $this->row['art_slug'] : '';
+                            if ($lylme_pages->have()):
+                                while ($lylme_pages->next()):
+                                    $lylme_pageCurHit = ($lylme_pageCur !== '' && (string) $lylme_pages->slug === $lylme_pageCur); ?>
+                                    <li class="nav-item<?php echo $lylme_pageCurHit ? ' active' : ''; ?>">
+                                        <a href="<?php echo lylme_e($lylme_pages->permalink); ?>"<?php echo $lylme_pageCurHit ? ' aria-current="page"' : ''; ?>>
+                                            <i class="mdi mdi-file-outline"></i><?php echo lylme_e($lylme_pages->title); ?>
+                                        </a>
+                                    </li>
+                                <?php endwhile;
+                            endif;
+                        endif; ?>
                         <li class="nav-item">
                             <a href="<?php echo lylme_e($lylme_feed); ?>" target="_blank" rel="noopener"><i class="mdi mdi-rss"></i><?php _e('RSS 订阅'); ?></a>
                         </li>

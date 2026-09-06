@@ -21,6 +21,107 @@ CREATE TABLE `lylme_apply` (
   `apply_status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '收录状态(0待审核,1通过，2拒绝)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='收录申请';
 
+DROP TABLE IF EXISTS `lylme_article`;
+CREATE TABLE `lylme_article` (
+  `art_id` int(11) NOT NULL COMMENT '文章ID',
+  `cat_id` int(11) NOT NULL DEFAULT '0' COMMENT '分类ID',
+  `art_title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '文章标题',
+  `art_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'URL别名',
+  `art_author` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '管理员' COMMENT '作者',
+  `art_author_uid` int(11) NOT NULL DEFAULT '0' COMMENT '投稿会员UID(0为管理员/系统)',
+  `art_content` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文章内容',
+  `art_excerpt` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '文章摘要',
+  `art_cover` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '封面图URL',
+  `art_keywords` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'SEO关键词',
+  `art_description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'SEO描述',
+  `art_views` int(11) NOT NULL DEFAULT '0' COMMENT '浏览次数',
+  `art_likes` int(11) NOT NULL DEFAULT '0' COMMENT '点赞数',
+  `art_comments` int(11) NOT NULL DEFAULT '0' COMMENT '评论数',
+  `art_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否置顶(0否1是)',
+  `art_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态(0草稿1发布2待审核)',
+  `art_allow_comment` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否允许评论(0否1是)',
+  `art_time` datetime NOT NULL COMMENT '发布时间',
+  `art_update` datetime NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章表';
+
+INSERT INTO `lylme_article` (`art_id`, `cat_id`, `art_title`, `art_slug`, `art_author`, `art_author_uid`, `art_content`, `art_excerpt`, `art_cover`, `art_keywords`, `art_description`, `art_views`, `art_likes`, `art_comments`, `art_top`, `art_status`, `art_allow_comment`, `art_time`, `art_update`) VALUES
+(1, 1, '欢迎来到本站', '', '管理员', 0, '**欢迎来到本站！很高兴在这里见到你。**\r\n\r\n本站是一个以网址收藏与分享为核心的**开源导航与博客二合一站点**：首页提供简洁高效的分类导航与搜索，同时用文章记录值得一看的发现、工具测评与上网技巧。本站基于开源项目 **LyLmecho** 搭建，而 LyLmecho 正是 **LyLme Spage（六零导航页）** 的独立增强版本——导航与写作，一站搞定。\r\n\r\n## 本站能做什么\r\n\r\n- **分类导航**：首页按分类整理常用网站，从效率工具到学习资源，分类浏览即可一键直达；\r\n- **快速搜索**：想找什么，在搜索框输入关键词即可快速定位目标；\r\n- **文章分享**：不定期更新收录心得、工具测评、上网技巧与站务公告；\r\n- **发现好站**：有私藏好站？欢迎通过站内提交渠道推荐，让更多人看\r\n\r\n### 什么是 LyLme Spage（六零导航页）\r\n\r\n**LyLme Spage（六零导航页）** 是一款开源的网址导航程序，由 LyLme 开发团队（上云六零科技工作室）开发维护，以 Apache License 2.0 协议开源。它坚持\"简洁高效、无广告\"的理念，把互联网上最具价值的链接沉淀为可分类、可搜索的导航首页，被广泛用于搭建个人起始页与网址导航站。\r\n\r\n### 什么是 LyLmecho\r\n\r\n**LyLmecho** 是 LyLme Spage 的**独立全新版本（独立仓库）**，相当于六零导航页的\"导航 + 博客\"增强线。它在完整保留 LyLme Spage 导航能力的基础上，新增了一套完整的**文章 / 博客模块**与 **Typecho 兼容层**，因此：\r\n\r\n- 既能整理收藏导航首页，也能发布文章、独立页面并支持评论互动；\r\n- 可直接运行 Typecho 生态的博客主题，无需二次开发即可换肤；\r\n- 整体以 GNU General Public License v2.0（GPL-2.0）开源发布。\r\n\r\n一句话总结：**LyLme Spage 负责\"链接\"，LyLmecho 能写\"文章\"**——本站的文章与博客部分，正是运行在 LyLmecho 之上。\r\n\r\n## 常见问题（FAQ）\r\n\r\n**1. 这是一个什么类型的网站？**\r\n\r\n本站属于**网站导航 + 博客站点**：核心是持续沉淀的高价值网址导航，外延是围绕上网效率与工具分享的原创文章，导航与博客数据同源、互相呼应。\r\n\r\n**2. 收藏的网址是人工整理的吗？**\r\n\r\n是。本站所有链接均由人工筛选、分类与维护，参考标准为：内容优质、更新稳定、无恶意弹窗与诱导下载、对多数访客有实用价值。被收录不代表背书，网站内容与运营情况随时可能变化，访问时请自行甄别。\r\n\r\n**3. 导航站为什么还要开博客？**\r\n\r\n基于 LyLmecho，导航与博客天然同源同库：公告、收录说明与工具测评可以长期沉淀，比一次性展示更适合承载\"为什么收录、如何使用\"这类深度内容，也方便访客留言交流。\r\n\r\n**4. 我的网站不希望被收录怎么办？**\r\n\r\n直接通过站内留言或文章评论区联系我们，说明站点域名即可，核实后会第一时间处理，并从收录中移除。\r\n\r\n## 声明与联系\r\n\r\n本站收录的网址均为人工收集整理，版权归原网站所有；本站不存储、不转发任何第三方网站内容。\r\n\r\n如发现收录信息有误、链接失效，或您的网站不希望被收录，欢迎**通过站内留言或文章评论区联系我们**。\r\n\r\n## 写在最后\r\n\r\n导航只是渡船，不是彼岸；收藏夹越满，越容易落满灰尘。愿你的收藏夹少一些\"从未开始\"的遗憾，多一些\"刚刚完成\"的踏实。\r\n\r\n祝你上网愉快！\r\n', '欢迎来到本站！很高兴在这里见到你。', '', '', '', 1, 0, 0, 1, 1, 1, '2026-09-06 16:09:52', '2026-09-06 16:42:40');
+
+DROP TABLE IF EXISTS `lylme_article_cat`;
+CREATE TABLE `lylme_article_cat` (
+  `cat_id` int(11) NOT NULL COMMENT '分类ID',
+  `cat_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类名称',
+  `cat_alias` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类别名',
+  `cat_desc` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类描述',
+  `cat_order` int(4) NOT NULL DEFAULT '10' COMMENT '排序',
+  `cat_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态(0禁用1启用)',
+  `cat_time` datetime NOT NULL COMMENT '创建时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章分类表';
+
+INSERT INTO `lylme_article_cat` (`cat_id`, `cat_name`, `cat_alias`, `cat_desc`, `cat_order`, `cat_status`, `cat_time`) VALUES
+(1, '默认分类', 'default', '系统默认文章分类', 1, 1, '2026-09-06 07:58:34');
+
+DROP TABLE IF EXISTS `lylme_article_comment`;
+CREATE TABLE `lylme_article_comment` (
+  `com_id` int(11) NOT NULL COMMENT '评论ID',
+  `art_id` int(11) NOT NULL COMMENT '文章ID',
+  `com_pid` int(11) NOT NULL DEFAULT '0' COMMENT '父评论ID(0为顶级)',
+  `com_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '昵称',
+  `com_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱',
+  `com_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '网站链接',
+  `com_ip` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'IP地址',
+  `com_agent` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'User-Agent',
+  `com_content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
+  `com_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态(0待审核1已通过)',
+  `com_uid` int(11) NOT NULL DEFAULT '0' COMMENT '发表评论的会员ID(0为游客)',
+  `com_time` datetime NOT NULL COMMENT '评论时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章评论表';
+
+DROP TABLE IF EXISTS `lylme_article_config`;
+CREATE TABLE `lylme_article_config` (
+  `id` int(11) NOT NULL COMMENT 'ID',
+  `k` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '配置项',
+  `v` text COLLATE utf8mb4_unicode_ci COMMENT '配置值'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章模块配置';
+
+INSERT INTO `lylme_article_config` (`id`, `k`, `v`) VALUES
+(1, 'article_status', '1'),
+(2, 'article_perpage', '10'),
+(3, 'article_comment', '1'),
+(4, 'article_audit', '1'),
+(5, 'article_name', '管理员'),
+(6, 'article_theme', 'lylme'),
+(7, 'article_web_title', 'LyLmecho'),
+(8, 'article_web_keywords', 'lylme,lylme_spage,lylmecho,上云六零,六零'),
+(9, 'article_web_description', '文字链接，皆有回响'),
+(10, 'article_url_style', 'default'),
+(11, 'article_url_custom', 'article/post{id}.html'),
+(12, 'article_member_status', '0'),
+(13, 'article_member_verify', '0'),
+(14, 'article_member_role', 'subscriber'),
+(15, 'article_mail_status', '0'),
+(16, 'article_mail_host', ''),
+(17, 'article_mail_port', '465'),
+(18, 'article_mail_secure', 'ssl'),
+(19, 'article_mail_user', ''),
+(20, 'article_mail_pass', ''),
+(21, 'article_mail_from', ''),
+(22, 'article_mail_from_name', ''),
+(23, 'article_post_status', '0');
+
+DROP TABLE IF EXISTS `lylme_article_page`;
+CREATE TABLE `lylme_article_page` (
+  `page_id` int(11) NOT NULL COMMENT '页面ID',
+  `page_title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '页面标题',
+  `page_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'URL别名',
+  `page_content` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '页面内容',
+  `page_excerpt` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '页面摘要',
+  `page_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态(0草稿1发布)',
+  `page_order` int(11) NOT NULL DEFAULT '10' COMMENT '排序',
+  `page_time` datetime NOT NULL COMMENT '创建时间',
+  `page_update` datetime NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章独立页面表';
+
 DROP TABLE IF EXISTS `lylme_config`;
 CREATE TABLE `lylme_config` (
   `id` int(11) NOT NULL COMMENT 'ID',
@@ -47,7 +148,7 @@ INSERT INTO `lylme_config` (`id`, `k`, `v`, `description`) VALUES
 (15, 'template', 'default', '网站主题'),
 (16, 'wztj', '', '自定义footer'),
 (17, 'tq', 'false', '天气显示开关(部分主题支持)'),
-(18, 'version', 'v2.7.0', '数据库版本号'),
+(18, 'version', 'v5.0.0', '数据库版本号'),
 (19, 'wap_background', '', '手机背景图片'),
 (20, 'wxplus', '', '微信推送密钥'),
 (21, 'wxplustime', '20:00', '微信推送时间'),
@@ -241,7 +342,27 @@ INSERT INTO `lylme_links` (`id`, `name`, `group_id`, `url`, `icon`, `link_desc`,
 (146, '京东', 1, 'https://www.jd.com/', '<svg class=\"icon\" aria-hidden=\"true\"><use xlink:href=\"#lyicon-jingdong\"></use></svg>', '正品低价的综合网购商城', '京东,网上商城,正品,家电数码', 7, 1, 0),
 (147, '申请收录', 11, '/apply', '<svg class=\"icon\" aria-hidden=\"true\"><use xlink:href=\"#lyicon-gonggao\">\r\n</use></svg>', '申请本站收录', '申请收录.六零导航页', 147, 1, 0),
 (148, '关于本站', 11, '/about', '<svg class=\"icon\" aria-hidden=\"true\"><use xlink:href=\"#lyicon-lylme\">\r\n</use></svg>', '简洁高效的网址导航', '关于本站,六零导航页', 148, 1, 0),
-(149, '今日热点', 1, 'https://60s.lylme.com', '<svg class=\"icon\" aria-hidden=\"true\"><use xlink:href=\"#lyicon-rebang\">\r\n</use></svg>', '每天120秒看世界', 'LyToday,60秒读懂世界,历史上的今天,今日黄历,上云六零,六零,LyLme,今日120秒视界', 148, 1, 0);
+(149, '今日热点', 1, 'https://60s.lylme.com', '<svg class=\"icon\" aria-hidden=\"true\"><use xlink:href=\"#lyicon-rebang\">\r\n</use></svg>', '每天120秒看世界', 'LyToday,60秒读懂世界,历史上的今天,今日黄历,上云六零,六零,LyLme,今日120秒视界', 148, 1, 0),
+(150, '站内博客', 11, '//article', '<svg class=\"icon\" aria-hidden=\"true\"><use xlink:href=\"#lyicon-zixun\">\r\n</use></svg>', '访问站内博客', 'LyLmecho,博客.六零导航页', 150, 1, 0);
+
+DROP TABLE IF EXISTS `lylme_article_user`;
+CREATE TABLE `lylme_article_user` (
+  `uid` int(11) NOT NULL COMMENT '会员ID',
+  `username` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '登录名',
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '密码哈希(password_hash)',
+  `nickname` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '显示昵称',
+  `email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱',
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '个人网站',
+  `role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'subscriber' COMMENT '角色:subscriber/contributor/editor',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态(0待邮箱验证/禁用,1正常)',
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '头像URL',
+  `verify_token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱验证令牌',
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '记住我令牌哈希(可撤销)',
+  `token_exp` int(11) NOT NULL DEFAULT '0' COMMENT '记住我令牌过期时间戳',
+  `reg_ip` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '注册IP',
+  `reg_time` datetime NOT NULL COMMENT '注册时间',
+  `last_login` datetime DEFAULT NULL COMMENT '最后登录时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章前台会员表';
 
 DROP TABLE IF EXISTS `lylme_pwd`;
 CREATE TABLE `lylme_pwd` (
@@ -250,8 +371,6 @@ CREATE TABLE `lylme_pwd` (
   `pwd_key` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '加密组密码',
   `pwd_ps` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '加密组备注'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
 
 DROP TABLE IF EXISTS `lylme_sou`;
 CREATE TABLE `lylme_sou` (
@@ -290,226 +409,47 @@ CREATE TABLE `lylme_tags` (
 INSERT INTO `lylme_tags` (`tag_id`, `tag_name`, `tag_link`, `tag_target`, `sort`) VALUES
 (1, '关于本站', '/about', 1, 10),
 (2, '申请收录', '/apply', 1, 10),
-(3, '访问管理', '/pwd', 0, 10);
-
--- ==================== 文章模块数据表 ====================
-
-DROP TABLE IF EXISTS `lylme_article`;
-CREATE TABLE `lylme_article` (
-  `art_id` int(11) NOT NULL COMMENT '文章ID',
-  `cat_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类ID',
-  `art_title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '文章标题',
-  `art_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'URL别名',
-  `art_author` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '管理员' COMMENT '作者',
-  `art_author_uid` int(11) NOT NULL DEFAULT 0 COMMENT '投稿会员UID(0为管理员/系统)',
-  `art_content` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文章内容',
-  `art_excerpt` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '文章摘要',
-  `art_cover` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '封面图URL',
-  `art_keywords` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'SEO关键词',
-  `art_description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'SEO描述',
-  `art_views` int(11) NOT NULL DEFAULT 0 COMMENT '浏览次数',
-  `art_likes` int(11) NOT NULL DEFAULT 0 COMMENT '点赞数',
-  `art_comments` int(11) NOT NULL DEFAULT 0 COMMENT '评论数',
-  `art_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶(0否1是)',
-  `art_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态(0草稿1发布2待审核)',
-  `art_allow_comment` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否允许评论(0否1是)',
-  `art_time` datetime NOT NULL COMMENT '发布时间',
-  `art_update` datetime NOT NULL COMMENT '更新时间',
-  PRIMARY KEY (`art_id`),
-  KEY `idx_cat_id` (`cat_id`),
-  KEY `idx_art_status` (`art_status`),
-  KEY `idx_art_top` (`art_top`),
-  KEY `idx_art_time` (`art_time`),
-  KEY `idx_art_slug` (`art_slug`),
-  KEY `idx_author_uid` (`art_author_uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章表';
-
-DROP TABLE IF EXISTS `lylme_article_cat`;
-CREATE TABLE `lylme_article_cat` (
-  `cat_id` int(11) NOT NULL COMMENT '分类ID',
-  `cat_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类名称',
-  `cat_alias` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类别名',
-  `cat_desc` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类描述',
-  `cat_order` int(4) NOT NULL DEFAULT 10 COMMENT '排序',
-  `cat_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态(0禁用1启用)',
-  `cat_time` datetime NOT NULL COMMENT '创建时间',
-  PRIMARY KEY (`cat_id`),
-  KEY `idx_cat_alias` (`cat_alias`),
-  KEY `idx_cat_order` (`cat_order`),
-  KEY `idx_cat_status` (`cat_status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章分类表';
-
-INSERT INTO `lylme_article_cat` (`cat_id`, `cat_name`, `cat_alias`, `cat_desc`, `cat_order`, `cat_status`, `cat_time`) VALUES
-(1, '默认分类', 'default', '系统默认文章分类', 1, 1, NOW());
-
-DROP TABLE IF EXISTS `lylme_article_page`;
-CREATE TABLE `lylme_article_page` (
-  `page_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '页面ID',
-  `page_title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '页面标题',
-  `page_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'URL别名',
-  `page_content` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '页面内容',
-  `page_excerpt` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '页面摘要',
-  `page_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态(0草稿1发布)',
-  `page_order` int(11) NOT NULL DEFAULT 10 COMMENT '排序',
-  `page_time` datetime NOT NULL COMMENT '创建时间',
-  `page_update` datetime NOT NULL COMMENT '更新时间',
-  PRIMARY KEY (`page_id`),
-  KEY `idx_page_slug` (`page_slug`),
-  KEY `idx_page_status` (`page_status`),
-  KEY `idx_page_order` (`page_order`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章独立页面表';
-
-INSERT INTO `lylme_article_page` (`page_id`, `page_title`, `page_slug`, `page_content`, `page_status`, `page_order`, `page_time`, `page_update`) VALUES
-(1, '关于本站', 'about', '<h3>关于本站</h3><p>欢迎访问本站！这是一个基于 LyLme Spage 文章模块搭建的独立页面示例。</p>', 1, 1, NOW(), NOW());
-
-INSERT INTO `lylme_article` (`art_id`, `cat_id`, `art_title`, `art_slug`, `art_author`, `art_author_uid`, `art_content`, `art_excerpt`, `art_cover`, `art_keywords`, `art_description`, `art_views`, `art_likes`, `art_comments`, `art_top`, `art_status`, `art_allow_comment`, `art_time`, `art_update`) VALUES
-(NULL, 1, '欢迎来到本站', 'welcome', '管理员', 0, '欢迎来到本站！很高兴在这里见到你。
-
-本站是一个以网址收藏与分享为核心的**开源导航与博客二合一站点**：首页提供简洁高效的分类导航与搜索，同时用文章记录值得一看的发现、工具测评与上网技巧。本站基于开源项目 **LyLmecho** 搭建，而 LyLmecho 正是 **LyLme Spage（六零导航页）** 的独立增强版本——导航与写作，一站搞定。
-
-## 本站能做什么
-
-- **分类导航**：首页按分类整理常用网站，从效率工具到学习资源，分类浏览即可一键直达；
-- **快速搜索**：想找什么，在搜索框输入关键词即可快速定位目标；
-- **文章分享**：不定期更新收录心得、工具测评、上网技巧与站务公告；
-- **发现好站**：有私藏好站？欢迎通过站内提交渠道推荐，让更多人看到。
-
-<!--more-->
-
-## 本站由什么驱动：LyLme Spage 与 LyLmecho
-
-### 什么是 LyLme Spage（六零导航页）
-
-**LyLme Spage（六零导航页）** 是一款开源的网址导航程序，由 LyLme 开发团队（上云六零科技工作室）开发维护，以 Apache License 2.0 协议开源。它坚持“简洁高效、无广告”的理念，把互联网上最具价值的链接沉淀为可分类、可搜索的导航首页，被广泛用于搭建个人起始页与网址导航站。
-
-### 什么是 LyLmecho
-
-**LyLmecho** 是 LyLme Spage 的**独立全新版本（独立仓库）**，相当于六零导航页的“导航 + 博客”增强线。它在完整保留 LyLme Spage 导航能力的基础上，新增了一套完整的**文章 / 博客模块**与 **Typecho 兼容层**，因此：
-
-- 既能整理收藏导航首页，也能发布文章、独立页面并支持评论互动；
-- 可直接运行 Typecho 生态的博客主题，无需二次开发即可换肤；
-- 整体以 GNU General Public License v2.0（GPL-2.0）开源发布。
-
-一句话总结：**LyLme Spage 负责“导得好”，LyLmecho 让它还能“写得好”**——本站的文章与博客部分，正是运行在 LyLmecho 之上。
-
-## 常见问题（FAQ）
-
-**1. 这是一个什么类型的网站？**
-
-本站属于**个人性质的导航 + 博客站点**：核心是持续沉淀的高价值网址导航，外延是围绕上网效率与工具分享的原创文章，导航与博客数据同源、互相呼应。
-
-**2. 收藏的网址是人工整理的吗？**
-
-是。本站所有链接均由人工筛选、分类与维护，参考标准为：内容优质、更新稳定、无恶意弹窗与诱导下载、对多数访客有实用价值。被收录不代表背书，网站内容与运营情况随时可能变化，访问时请自行甄别。
-
-**3. 导航站为什么还要开博客？**
-
-基于 LyLmecho，导航与博客天然同源同库：公告、收录说明与工具测评可以长期沉淀，比一次性展示更适合承载“为什么收录、如何使用”这类深度内容，也方便访客留言交流。
-
-**4. LyLme Spage 与 LyLmecho 是同一个项目吗？**
-
-不是。LyLme Spage（lylme_spage）是主仓库，仅包含导航功能，采用 Apache-2.0 协议；LyLmecho 是独立的全新仓库，在共用导航内核的基础上集成文章模块与 Typecho 兼容层，整体采用 GPL-2.0 协议。二者同源，独立维护、独立发布。
-
-**5. 我的网站不希望被收录怎么办？**
-
-直接通过站内留言或文章评论区联系我们，说明站点域名即可，核实后会第一时间处理，并从收录中移除。
-
-## 声明与联系
-
-本站收录的网址均为人工收集整理，版权归原网站所有；本站不存储、不转发任何第三方网站内容。
-
-如发现收录信息有误、链接失效，或您的网站不希望被收录，欢迎**通过站内留言或文章评论区联系我们**。
-
-## 写在最后
-
-导航只是工具，收藏夹越满越容易落灰。愿你少一点“收藏从未停止”，多一点“行动从未开始”。
-
-祝你上网愉快！', '本站是基于开源项目 LyLmecho 搭建的导航与博客二合一站点。LyLmecho 是六零导航页（LyLme Spage）的独立增强版本，保留完整导航能力并集成文章模块，本文附两者关系与常见问题说明。', '', '欢迎来到本站,LyLme Spage,六零导航页,LyLmecho,网址导航,导航博客,开源博客', '欢迎来到本站。本站由 LyLmecho 驱动，即 LyLme Spage（六零导航页）的独立增强版，集网址导航与博客于一体，人工精选高价值链接并提供常见问题解答。', 0, 0, 0, 1, 1, 1, NOW(), NOW());
-
-DROP TABLE IF EXISTS `lylme_article_comment`;
-CREATE TABLE `lylme_article_comment` (
-  `com_id` int(11) NOT NULL COMMENT '评论ID',
-  `art_id` int(11) NOT NULL COMMENT '文章ID',
-  `com_pid` int(11) NOT NULL DEFAULT 0 COMMENT '父评论ID(0为顶级)',
-  `com_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '昵称',
-  `com_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱',
-  `com_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '网站链接',
-  `com_ip` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'IP地址',
-  `com_agent` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'User-Agent',
-  `com_content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
-  `com_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态(0待审核1已通过)',
-  `com_uid` int(11) NOT NULL DEFAULT 0 COMMENT '发表评论的会员ID(0为游客)',
-  `com_time` datetime NOT NULL COMMENT '评论时间',
-  PRIMARY KEY (`com_id`),
-  KEY `idx_comment_art_id` (`art_id`),
-  KEY `idx_com_pid` (`com_pid`),
-  KEY `idx_com_status` (`com_status`),
-  KEY `idx_com_uid` (`com_uid`),
-  KEY `idx_com_time` (`com_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章评论表';
-
-DROP TABLE IF EXISTS `lylme_member`;
-CREATE TABLE `lylme_member` (
-  `uid` int(11) NOT NULL COMMENT '会员ID',
-  `username` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '登录名',
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '密码哈希(password_hash)',
-  `nickname` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '显示昵称',
-  `email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱',
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '个人网站',
-  `role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'subscriber' COMMENT '角色:subscriber/contributor/editor',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态(0待邮箱验证/禁用,1正常)',
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '头像URL',
-  `verify_token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱验证令牌',
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '记住我令牌哈希(可撤销)',
-  `token_exp` int(11) NOT NULL DEFAULT 0 COMMENT '记住我令牌过期时间戳',
-  `reg_ip` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '注册IP',
-  `reg_time` datetime NOT NULL COMMENT '注册时间',
-  `last_login` datetime DEFAULT NULL COMMENT '最后登录时间',
-  PRIMARY KEY (`uid`),
-  UNIQUE KEY `uk_member_username` (`username`),
-  KEY `idx_member_email` (`email`),
-  KEY `idx_member_status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章前台会员表';
-
-DROP TABLE IF EXISTS `lylme_article_config`;
-CREATE TABLE `lylme_article_config` (
-  `id` int(11) NOT NULL COMMENT 'ID',
-  `k` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '配置项',
-  `v` text COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '配置值',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_article_k` (`k`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章模块配置';
-
-INSERT INTO `lylme_article_config` (`id`, `k`, `v`) VALUES
-(1, 'article_status', '1'),
-(2, 'article_perpage', '10'),
-(3, 'article_comment', '1'),
-(4, 'article_audit', '0'),
-(5, 'article_name', '管理员'),
-(6, 'article_theme', 'typecho'),
-(7, 'article_web_title', '博客'),
-(8, 'article_web_keywords', 'lylme,lylme_spage'),
-(9, 'article_web_description', 'LyLme Spage Blog'),
-(10, 'article_url_style', 'default'),
-(11, 'article_url_custom', 'article/post{id}.html'),
-(12, 'article_member_status', '1'),
-(13, 'article_member_verify', '0'),
-(14, 'article_member_role', 'subscriber'),
-(15, 'article_mail_status', '0'),
-(16, 'article_mail_host', ''),
-(17, 'article_mail_port', '465'),
-(18, 'article_mail_secure', 'ssl'),
-(19, 'article_mail_user', ''),
-(20, 'article_mail_pass', ''),
-(21, 'article_mail_from', ''),
-(22, 'article_mail_from_name', ''),
-(23, 'article_post_status', '0');
+(3, '访问管理', '/pwd', 0, 10),
+(4, '站内博客', '/article', 1, 5);
 
 
 ALTER TABLE `lylme_apply`
   ADD PRIMARY KEY (`apply_id`),
   ADD KEY `idx_apply_group` (`apply_group`),
   ADD KEY `idx_apply_status` (`apply_status`);
+
+ALTER TABLE `lylme_article`
+  ADD PRIMARY KEY (`art_id`),
+  ADD KEY `idx_cat_id` (`cat_id`),
+  ADD KEY `idx_art_status` (`art_status`),
+  ADD KEY `idx_art_top` (`art_top`),
+  ADD KEY `idx_art_time` (`art_time`),
+  ADD KEY `idx_art_slug` (`art_slug`),
+  ADD KEY `idx_author_uid` (`art_author_uid`);
+
+ALTER TABLE `lylme_article_cat`
+  ADD PRIMARY KEY (`cat_id`),
+  ADD KEY `idx_cat_alias` (`cat_alias`),
+  ADD KEY `idx_cat_order` (`cat_order`),
+  ADD KEY `idx_cat_status` (`cat_status`);
+
+ALTER TABLE `lylme_article_comment`
+  ADD PRIMARY KEY (`com_id`),
+  ADD KEY `idx_comment_art_id` (`art_id`),
+  ADD KEY `idx_com_pid` (`com_pid`),
+  ADD KEY `idx_com_status` (`com_status`),
+  ADD KEY `idx_com_uid` (`com_uid`),
+  ADD KEY `idx_com_time` (`com_time`);
+
+ALTER TABLE `lylme_article_config`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_article_k` (`k`);
+
+ALTER TABLE `lylme_article_page`
+  ADD PRIMARY KEY (`page_id`),
+  ADD KEY `idx_page_slug` (`page_slug`),
+  ADD KEY `idx_page_status` (`page_status`),
+  ADD KEY `idx_page_order` (`page_order`);
 
 ALTER TABLE `lylme_config`
   ADD PRIMARY KEY (`id`),
@@ -524,6 +464,12 @@ ALTER TABLE `lylme_links`
   ADD KEY `idx_group_id` (`group_id`),
   ADD KEY `idx_link_pwd` (`link_pwd`),
   ADD KEY `idx_link_status` (`link_status`);
+
+ALTER TABLE `lylme_article_user`
+  ADD PRIMARY KEY (`uid`),
+  ADD UNIQUE KEY `uk_member_username` (`username`),
+  ADD KEY `idx_member_email` (`email`),
+  ADD KEY `idx_member_status` (`status`);
 
 ALTER TABLE `lylme_pwd`
   ADD PRIMARY KEY (`pwd_id`);
@@ -541,26 +487,8 @@ ALTER TABLE `lylme_tags`
 ALTER TABLE `lylme_apply`
   MODIFY `apply_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '收录ID';
 
-ALTER TABLE `lylme_config`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=25;
-
-ALTER TABLE `lylme_groups`
-  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分组ID', AUTO_INCREMENT=12;
-
-ALTER TABLE `lylme_links`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '链接ID', AUTO_INCREMENT=150;
-
-ALTER TABLE `lylme_pwd`
-  MODIFY `pwd_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '加密组ID';
-
-ALTER TABLE `lylme_sou`
-  MODIFY `sou_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '搜索引擎ID', AUTO_INCREMENT=10;
-
-ALTER TABLE `lylme_tags`
-  MODIFY `tag_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '导航菜单ID', AUTO_INCREMENT=4;
-
 ALTER TABLE `lylme_article`
-  MODIFY `art_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章ID';
+  MODIFY `art_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章ID', AUTO_INCREMENT=2;
 
 ALTER TABLE `lylme_article_cat`
   MODIFY `cat_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID', AUTO_INCREMENT=2;
@@ -569,11 +497,31 @@ ALTER TABLE `lylme_article_comment`
   MODIFY `com_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '评论ID';
 
 ALTER TABLE `lylme_article_config`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=66;
 
-ALTER TABLE `lylme_member`
+ALTER TABLE `lylme_article_page`
+  MODIFY `page_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '页面ID';
+
+ALTER TABLE `lylme_config`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=25;
+
+ALTER TABLE `lylme_groups`
+  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分组ID', AUTO_INCREMENT=12;
+
+ALTER TABLE `lylme_links`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '链接ID', AUTO_INCREMENT=151;
+
+ALTER TABLE `lylme_article_user`
   MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT '会员ID';
 
+ALTER TABLE `lylme_pwd`
+  MODIFY `pwd_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '加密组ID';
+
+ALTER TABLE `lylme_sou`
+  MODIFY `sou_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '搜索引擎ID', AUTO_INCREMENT=10;
+
+ALTER TABLE `lylme_tags`
+  MODIFY `tag_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '导航菜单ID', AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

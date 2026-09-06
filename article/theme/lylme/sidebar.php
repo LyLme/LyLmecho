@@ -73,6 +73,39 @@ $lylme_comfeed  = (string) (isset($this->options->commentsFeedUrl) ? $this->opti
                                 </section>
                             <?php endif; ?>
 
+                            <?php if (lylme_block_on($this, 'ShowPages')):
+                                \Widget\Contents\Page\Rows::alloc()->to($lylme_pages);
+                                $lylme_pageRows = [];
+                                if ($lylme_pages->have()) {
+                                    while ($lylme_pages->next()) {
+                                        $lylme_pageRows[] = [
+                                            'title' => (string) $lylme_pages->title,
+                                            'url'   => (string) $lylme_pages->permalink,
+                                        ];
+                                    }
+                                }
+                                if (!empty($lylme_pageRows)): ?>
+                                    <section class="card lylme-widget">
+                                        <div class="card-header lylme-widget-head">
+                                            <h4><i class="mdi mdi-file-outline"></i> <?php _e('独立页面'); ?></h4>
+                                            <span class="lylme-widget-badge"><?php echo count($lylme_pageRows); ?></span>
+                                        </div>
+                                        <div class="card-body lylme-widget-body">
+                                            <ul class="lylme-cat-list">
+                                                <?php foreach ($lylme_pageRows as $pr): ?>
+                                                    <li>
+                                                        <a href="<?php echo lylme_e($pr['url']); ?>">
+                                                            <i class="mdi mdi-circle-small"></i>
+                                                            <span class="lylme-cat-name"><?php echo lylme_e($pr['title']); ?></span>
+                                                        </a>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        </div>
+                                    </section>
+                                <?php endif;
+                            endif; ?>
+
                             <?php if (lylme_block_on($this, 'ShowCategories')):
                                 \Widget\Metas\Category\Rows::alloc()->to($lylme_cats);
                                 $lylme_catRows = [];

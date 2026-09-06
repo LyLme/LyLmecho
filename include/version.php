@@ -1,3 +1,3 @@
 <?php
 
-define('VERSION', '2.7.1');
+define('VERSION', '5.0.0');

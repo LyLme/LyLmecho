@@ -152,7 +152,7 @@ LyLmecho/
 | `lylme_article_comment` | 评论（嵌套、审核、访客信息、绑定会员 UID） |
 | `lylme_article_page` | 独立页面 |
 | `lylme_article_config` | 模块配置（键值对：开关 / 主题 / 评论 / 会员 / SMTP / URL 风格等） |
-| `lylme_member` | 前台会员（bcrypt 密码、角色、状态、邮箱验证、可撤销 token） |
+| `lylme_article_user` | 前台会员（bcrypt 密码、角色、状态、邮箱验证、可撤销 token） |
 
 ## 相关文档
 

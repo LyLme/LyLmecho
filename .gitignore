@@ -9,3 +9,4 @@ include/qrcode.png
 /config.php
 logs/*
 article/typecho/
+article/dev/

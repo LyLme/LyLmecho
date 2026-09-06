@@ -690,10 +690,10 @@ switch ($submit) {
         }
         $uEsc = $DB->escape($username);
         $eEsc = $DB->escape($email);
-        if ($DB->get_row("SELECT `uid` FROM `lylme_member` WHERE `username` = '{$uEsc}' LIMIT 1")) {
+        if ($DB->get_row("SELECT `uid` FROM `lylme_article_user` WHERE `username` = '{$uEsc}' LIMIT 1")) {
             out_json('该用户名已存在', 100);
         }
-        if ($DB->get_row("SELECT `uid` FROM `lylme_member` WHERE `email` = '{$eEsc}' LIMIT 1")) {
+        if ($DB->get_row("SELECT `uid` FROM `lylme_article_user` WHERE `email` = '{$eEsc}' LIMIT 1")) {
             out_json('该邮箱已被使用', 100);
         }
         if ($nickname === '') {
@@ -713,7 +713,7 @@ switch ($submit) {
             'reg_ip'   => isset($_SERVER['REMOTE_ADDR']) ? substr((string) $_SERVER['REMOTE_ADDR'], 0, 64) : '',
             'reg_time' => date('Y-m-d H:i:s'),
         );
-        $uid = $DB->insert_array('lylme_member', $insert);
+        $uid = $DB->insert_array('lylme_article_user', $insert);
         if ($uid) {
             out_json('会员添加成功，UID: ' . intval($uid));
         }
@@ -726,7 +726,7 @@ switch ($submit) {
         if ($uid <= 0) {
             out_json('参数错误', 100);
         }
-        if ($DB->query("UPDATE `lylme_member` SET `status` = {$status}" . ($status === 1 ? ", `verify_token` = ''" : '') . " WHERE `uid` = {$uid}")) {
+        if ($DB->query("UPDATE `lylme_article_user` SET `status` = {$status}" . ($status === 1 ? ", `verify_token` = ''" : '') . " WHERE `uid` = {$uid}")) {
             out_json($status === 1 ? '已启用' : '已禁用');
         }
         out_json('操作失败', 100);
@@ -738,7 +738,7 @@ switch ($submit) {
         if ($uid <= 0) {
             out_json('参数错误', 100);
         }
-        if ($DB->query("UPDATE `lylme_member` SET `role` = '{$role}' WHERE `uid` = {$uid}")) {
+        if ($DB->query("UPDATE `lylme_article_user` SET `role` = '{$role}' WHERE `uid` = {$uid}")) {
             out_json('角色已更新');
         }
         out_json('操作失败', 100);
@@ -754,7 +754,7 @@ switch ($submit) {
             out_json('密码长度需为 6-64 位', 100);
         }
         $hash = $DB->escape(password_hash($password, PASSWORD_DEFAULT));
-        if ($DB->query("UPDATE `lylme_member` SET `password` = '{$hash}' WHERE `uid` = {$uid}")) {
+        if ($DB->query("UPDATE `lylme_article_user` SET `password` = '{$hash}' WHERE `uid` = {$uid}")) {
             out_json('密码已重置');
         }
         out_json('操作失败', 100);
@@ -765,7 +765,7 @@ switch ($submit) {
         if ($uid <= 0) {
             out_json('参数错误', 100);
         }
-        if ($DB->query("DELETE FROM `lylme_member` WHERE `uid` = {$uid}")) {
+        if ($DB->query("DELETE FROM `lylme_article_user` WHERE `uid` = {$uid}")) {
             // 历史评论保留 com_uid 作为足迹，不改写(向后兼容)
             out_json('删除成功');
         }

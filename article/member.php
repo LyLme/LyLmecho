@@ -580,10 +580,10 @@ if ($action === 'verify') {
     $flash = '验证链接无效';
     if ($token !== '' && $DB instanceof \DB) {
         $esc = $DB->escape($token);
-        $row = $DB->get_row("SELECT `uid`,`status` FROM `lylme_member` WHERE `verify_token` = '{$esc}' AND `verify_token` <> '' LIMIT 1");
+        $row = $DB->get_row("SELECT `uid`,`status` FROM `lylme_article_user` WHERE `verify_token` = '{$esc}' AND `verify_token` <> '' LIMIT 1");
         if ($row) {
             $uid = intval($row['uid']);
-            $DB->query("UPDATE `lylme_member` SET `status` = 1, `verify_token` = '' WHERE `uid` = {$uid}");
+            $DB->query("UPDATE `lylme_article_user` SET `status` = 1, `verify_token` = '' WHERE `uid` = {$uid}");
             member_render('邮箱验证', '<p style="text-align:center">邮箱验证成功，现在可以登录了。</p>', '', ['前往登录' => App::$articleUrl . '?member=login']);
             exit;
         }

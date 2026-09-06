@@ -157,7 +157,7 @@
 | `metas` | `lylme_article_cat` |
 | `relationships` | `lylme_article_relationship` |
 | `fields` | `lylme_article`（重定向，仅 `views` 等列） |
-| `users` | `lylme_member` |
+| `users` | `lylme_article_user` |
 | `links` | `lylme_links` |
 
 # 第三部分：覆盖度与缺口深度检查（2026-09-06）
@@ -266,7 +266,7 @@ Db 系兼容层以「实体置扁平 + 嵌套命名空间别名」双层结构�
 | RSS/Atom | 由 article/feed.php 实现 | Feed 类最小实现 |
 | 评论分页 | 暂不实现 | CommentsWidget.pageNav 空实现 |
 | relationships 表 | 无（表名映射存在但表可能不存在） | 查询 try/catch 兜底 |
-| users 表 | lylme_member | 作者信息查询静默返回空 |
+| users 表 | lylme_article_user | 作者信息查询静默返回空 |
 | attachments | 无 | attachments() 降级 |
 | author 归档 | 无路由 | is('author') 永不命中 |
 | date 归档 | ?month= 映射为 index | is('date') 永不命中 |

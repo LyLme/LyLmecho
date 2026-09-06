@@ -3,8 +3,8 @@ $title = '会员管理';
 include './head.php';
 
 // 统计各状态数量
-$total = intval($DB->count("SELECT COUNT(*) FROM `lylme_member`"));
-$enabled = intval($DB->count("SELECT COUNT(*) FROM `lylme_member` WHERE `status` = 1"));
+$total = intval($DB->count("SELECT COUNT(*) FROM `lylme_article_user`"));
+$enabled = intval($DB->count("SELECT COUNT(*) FROM `lylme_article_user` WHERE `status` = 1"));
 
 // 关键字搜索
 $kw = isset($_GET['kw']) ? trim((string) $_GET['kw']) : '';
@@ -51,7 +51,7 @@ if ($kw !== '') {
                 </thead>
                 <tbody>
                   <?php
-                  $rs = $DB->query("SELECT * FROM `lylme_member`{$where} ORDER BY `uid` DESC");
+                  $rs = $DB->query("SELECT * FROM `lylme_article_user`{$where} ORDER BY `uid` DESC");
                   if (!$rs) {
                   ?>
                     <tr><td colspan="9" class="text-center text-muted">数据表暂不存在或读取失败，请先运行数据库升级</td></tr>

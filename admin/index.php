@@ -171,8 +171,11 @@ function tjsj($tjname)
 			</div>
 			<ul class="list-group">
 				<li class="list-group-item">
-					<b>程序名称：</b>六零导航页(LyLme Spage)
+					<b>程序名称：</b>LyLmecho<i>[Powered By LyLme Spage]</i>
 				</li>
+				
+
+				
 				<li class="list-group-item">
 					<b>主程序版本：</b>v<?php echo VERSION ?> <a href="./update.php" target="_blank">检查更新</a>
 				</li>
@@ -219,7 +222,7 @@ function tjsj($tjname)
 					<b>项目作者：</b>六零 <a href="https://www.lylme.com/support/" target="_blank">捐赠作者</a>
 				</li>
 				<li class="list-group-item">
-					<b>项目地址：</b><a href="https://github.com/LyLme/lylme_spage" target="_blank">https://github.com/LyLme/lylme_spage</a>
+					<b>项目地址：</b><a href="https://github.com/LyLme/LyLmecho" target="_blank">https://github.com/LyLme/LyLmecho</a>
 				</li>
 			</ul>
 		</div>

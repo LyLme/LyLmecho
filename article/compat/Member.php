@@ -8,7 +8,7 @@
  *   3) 后台管理员登录态识别 (与导航后台 admin_token 复用同一校验)
  *   4) 后台可配置开关读取: 注册开放 / 邮箱验证 / 默认角色
  *
- * 与导航单管理员后台权限边界隔离: 管理员不写入 lylme_member 表。
+ * 与导航单管理员后台权限边界隔离: 管理员不写入 lylme_article_user 表。
  */
 namespace Compat;
 
@@ -201,7 +201,7 @@ class Member
         if ($uid <= 0 || !self::db()) {
             return null;
         }
-        $row = self::db()->get_row("SELECT * FROM `lylme_member` WHERE `uid` = {$uid} LIMIT 1");
+        $row = self::db()->get_row("SELECT * FROM `lylme_article_user` WHERE `uid` = {$uid} LIMIT 1");
         return $row ?: null;
     }
 
@@ -212,7 +212,7 @@ class Member
             return null;
         }
         $esc = self::db()->escape($username);
-        $row = self::db()->get_row("SELECT * FROM `lylme_member` WHERE `username` = '{$esc}' LIMIT 1");
+        $row = self::db()->get_row("SELECT * FROM `lylme_article_user` WHERE `username` = '{$esc}' LIMIT 1");
         return $row ?: null;
     }
 
@@ -223,7 +223,7 @@ class Member
             return null;
         }
         $esc = self::db()->escape($email);
-        $row = self::db()->get_row("SELECT * FROM `lylme_member` WHERE `email` = '{$esc}' LIMIT 1");
+        $row = self::db()->get_row("SELECT * FROM `lylme_article_user` WHERE `email` = '{$esc}' LIMIT 1");
         return $row ?: null;
     }
 
@@ -316,7 +316,7 @@ class Member
             $insert['verify_token'] = self::randomToken();
         }
 
-        $uid = self::db()->insert_array('lylme_member', $insert);
+        $uid = self::db()->insert_array('lylme_article_user', $insert);
         return $uid ? intval($uid) : false;
     }
 
@@ -366,7 +366,7 @@ class Member
             $raw = self::randomToken();
             $hash = hash('sha256', $raw);
             $exp = time() + self::REMEMBER_TTL;
-            self::db()->query("UPDATE `lylme_member` SET `token` = '" . self::db()->escape($hash) . "', `token_exp` = {$exp} WHERE `uid` = {$uid}");
+            self::db()->query("UPDATE `lylme_article_user` SET `token` = '" . self::db()->escape($hash) . "', `token_exp` = {$exp} WHERE `uid` = {$uid}");
             self::setCookie($uid . ':' . $raw, $exp);
         }
 
@@ -375,7 +375,7 @@ class Member
         self::$resolved = null;
 
         // 更新最后登录时间
-        self::db()->query("UPDATE `lylme_member` SET `last_login` = '" . date('Y-m-d H:i:s') . "' WHERE `uid` = {$uid}");
+        self::db()->query("UPDATE `lylme_article_user` SET `last_login` = '" . date('Y-m-d H:i:s') . "' WHERE `uid` = {$uid}");
         return true;
     }
 
@@ -385,7 +385,7 @@ class Member
         $member = self::current();
         if ($member && !empty($member['uid'])) {
             $uid = intval($member['uid']);
-            self::db()->query("UPDATE `lylme_member` SET `token` = '', `token_exp` = 0 WHERE `uid` = {$uid}");
+            self::db()->query("UPDATE `lylme_article_user` SET `token` = '', `token_exp` = 0 WHERE `uid` = {$uid}");
         }
         if (session_status() === PHP_SESSION_NONE) {
             @session_start();
@@ -627,7 +627,7 @@ class Member
         if (empty($sets)) {
             return true;
         }
-        self::db()->query("UPDATE `lylme_member` SET " . implode(', ', $sets) . " WHERE `uid` = {$uid}");
+        self::db()->query("UPDATE `lylme_article_user` SET " . implode(', ', $sets) . " WHERE `uid` = {$uid}");
         self::$hasResolved = false;
         self::$resolved = null;
         return true;

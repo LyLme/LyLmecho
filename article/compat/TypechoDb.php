@@ -49,7 +49,7 @@ class Db
         'metas' => 'lylme_article_cat',
         'relationships' => 'lylme_article_relationship',
         'fields' => 'lylme_article',  // Typecho fields 表重定向到文章表 (views 等字段映射到 art_* 列)
-        'users' => 'lylme_member',     // Typecho 用户表重定向到会员表
+        'users' => 'lylme_article_user',     // Typecho 用户表重定向到会员表
         'links' => 'lylme_links',      // Typecho 友情链接表
     ];
 
@@ -102,7 +102,7 @@ class Db
         'spam' => '0',
     ];
 
-    /** @var array users 表(lylme_member)列名映射 (Typecho -> lylme) */
+    /** @var array users 表(lylme_article_user)列名映射 (Typecho -> lylme) */
     public static $userColumns = [
         'uid' => 'uid',
         'screenName' => 'nickname',
@@ -252,7 +252,7 @@ class Db
     }
 
     /**
-     * 将用户表(lylme_member)查询结果列名反向映射 (nickname -> screenName, email -> mail 等)
+     * 将用户表(lylme_article_user)查询结果列名反向映射 (nickname -> screenName, email -> mail 等)
      */
     public static function mapUsersRow($row)
     {
@@ -471,7 +471,7 @@ class DbQuery
     /** @var bool 是否评论表 (table.comments → lylme_article_comment) */
     protected $isComments = false;
 
-    /** @var bool 是否用户表 (table.users → lylme_member) */
+    /** @var bool 是否用户表 (table.users → lylme_article_user) */
     protected $isUsers = false;
 
     /** @var string|null 原始 SQL (直接传入时使用) */
@@ -528,7 +528,7 @@ class DbQuery
         $this->isOptions = ($rawTable === 'lylme_article_config');
         $this->isFields = ($rawTable === 'lylme_article' && strpos((string) $table, 'table.fields') !== false);
         $this->isComments = ($rawTable === 'lylme_article_comment');
-        $this->isUsers = ($rawTable === 'lylme_member');
+        $this->isUsers = ($rawTable === 'lylme_article_user');
         return $this;
     }
 

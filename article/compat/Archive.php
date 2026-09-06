@@ -873,8 +873,10 @@ class Archive extends BaseWidget
             $file = 'index.php';
         } elseif ($this->archiveType === 'page') {
             $file = 'page.php';
+            // Typecho 官方模板回退顺序: page.php → post.php → single/archive → index.php
+            // 许多 Typecho 主题不为独立页面单独建 page.php, 此时用 post.php 排版正文
             if (!is_file(App::$themeDir . 'page.php')) {
-                $file = 'index.php';
+                $file = (is_file(App::$themeDir . 'post.php')) ? 'post.php' : 'index.php';
             }
         } elseif ($this->archiveType === '404') {
             $file = '404.php';
