@@ -125,3 +125,40 @@ if (!function_exists('parseContent')) {
         echo $archive->content();
     }
 }
+
+// 确保导航链接详情页所需的评论类型/计数字段存在(一次性, 可重复执行, 无权限时静默忽略)
+if (!function_exists('article_ensure_site_schema')) {
+    function article_ensure_site_schema()
+    {
+        global $DB;
+        if (!is_object($DB) || !method_exists($DB, 'query')) {
+            return;
+        }
+        try {
+            $col = $DB->get_row("SHOW COLUMNS FROM `lylme_article_comment` LIKE 'com_type'");
+            if (empty($col)) {
+                $DB->query(
+                    "ALTER TABLE `lylme_article_comment` ADD COLUMN `com_type` TINYINT(1) NOT NULL DEFAULT 0 "
+                    . "COMMENT '评论类型:0=文章,1=链接' AFTER `art_id`"
+                );
+            }
+            $col2 = $DB->get_row("SHOW COLUMNS FROM `lylme_links` LIKE 'comments'");
+            if (empty($col2)) {
+                $DB->query(
+                    "ALTER TABLE `lylme_links` ADD COLUMN `comments` INT(11) NOT NULL DEFAULT 0 "
+                    . "COMMENT '评论数' AFTER `link_keywords`"
+                );
+            }
+            $col3 = $DB->get_row("SHOW COLUMNS FROM `lylme_links` LIKE 'link_content'");
+            if (empty($col3)) {
+                $DB->query(
+                    "ALTER TABLE `lylme_links` ADD COLUMN `link_content` MEDIUMTEXT "
+                    . "COMMENT '链接详情长文(Markdown, 渲染在详情页正文下方)' AFTER `link_pwd`"
+                );
+            }
+        } catch (\Exception $e) {
+            // 无 ALTER 权限时由站长手动执行迁移 SQL, 不影响既有功能
+        }
+    }
+}
+article_ensure_site_schema();

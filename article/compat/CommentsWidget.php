@@ -14,6 +14,9 @@ class CommentsWidget extends BaseWidget
     /** @var int 文章ID */
     protected $articleId = 0;
 
+    /** @var int 评论类型: 0=文章, 1=链接 */
+    protected $commentType = 0;
+
     /** @var bool 是否允许评论 */
     public $allowComment = true;
 
@@ -45,9 +48,11 @@ class CommentsWidget extends BaseWidget
             return;
         }
 
-        // 查询该文章下已通过审核的评论
+        $this->commentType = intval($this->param('type', 0));
+
+        // 查询该内容下已通过审核的评论 (com_type: 0=文章 1=链接, 防止 art_id 编号重叠时串评)
         $result = $this->db->query(
-            "SELECT * FROM `lylme_article_comment` WHERE `art_id` = {$this->articleId} AND `com_status` = 1 ORDER BY `com_id` ASC"
+            "SELECT * FROM `lylme_article_comment` WHERE `art_id` = {$this->articleId} AND `com_type` = {$this->commentType} AND `com_status` = 1 ORDER BY `com_id` ASC"
         );
 
         $rows = [];

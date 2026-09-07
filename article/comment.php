@@ -35,12 +35,20 @@ if (!function_exists('article_redirect')) {
         $artId  = intval($artId);
         $target = App::$articleUrl;
         if ($artId > 0) {
-            // 只给 art_id 时, App::postUrl() 在 slug / custom 风格下会退化成 id 形式 URL,
-            // 与文章自身的固定链接不是同一个地址; 这里把构造 URL 需要的字段补齐
+            // 文章存在则回到文章固定链接; 否则尝试导航链接固定链接
             $row = (is_object($DB) && method_exists($DB, 'get_row'))
                 ? $DB->get_row("SELECT `art_id`, `art_slug`, `art_title`, `art_time` FROM `lylme_article` WHERE `art_id` = {$artId}")
                 : false;
-            $target = App::postUrl(is_array($row) ? $row : ['art_id' => $artId]);
+            if (is_array($row) && !empty($row)) {
+                $target = App::postUrl($row);
+            } else {
+                $linkRow = (is_object($DB) && method_exists($DB, 'get_row'))
+                    ? $DB->get_row("SELECT `id` FROM `lylme_links` WHERE `id` = {$artId} LIMIT 1")
+                    : false;
+                if (is_array($linkRow) && !empty($linkRow)) {
+                    $target = App::siteUrl($linkRow);
+                }
+            }
         }
         header('Location: ' . $target . $fragment);
         exit;
@@ -67,18 +75,33 @@ if (!function_exists('article_str_cut')) {
 
 $artId = isset($_GET['comment']) ? intval($_GET['comment']) : 0;
 
-// 仅接受 POST 提交, 其他方法直接跳回文章页
+// 仅接受 POST 提交, 其他方法直接跳回详情页
 if (isset($_SERVER['REQUEST_METHOD']) && strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
     article_redirect($artId, '#comments');
 }
 
-// 校验文章存在且允许评论
+// 判定评论目标类型: 0=文章, 1=导航链接
+$comType = 0;
 $article = $DB->get_row(
-    "SELECT `art_id` FROM `lylme_article` WHERE `art_id` = {$artId} AND `art_status` = 1 AND `art_allow_comment` = 1"
+    "SELECT `art_id`, `art_allow_comment` FROM `lylme_article` WHERE `art_id` = {$artId} AND `art_status` = 1 LIMIT 1"
 );
 if (!$article) {
-    $_SESSION['article_comment_flash'] = '评论失败：文章不存在或不允许评论';
+    // 回退校验导航链接
+    $linkTarget = $DB->get_row("SELECT `id` FROM `lylme_links` WHERE `id` = {$artId} LIMIT 1");
+    if ($linkTarget) {
+        $comType = 1;
+        // 链接默认允许评论, 构造占位行供下方统一处理
+        $article = ['art_id' => $artId, 'art_allow_comment' => 1];
+    }
+}
+if (!$article) {
+    $_SESSION['article_comment_flash'] = '评论失败：内容不存在或不允许评论';
     article_redirect(0);
+}
+// 文章需校验是否开启评论; 链接默认开启(受全局评论开关控制)
+if ($comType === 0 && intval(isset($article['art_allow_comment']) ? $article['art_allow_comment'] : 0) !== 1) {
+    $_SESSION['article_comment_flash'] = '评论失败：内容不允许评论';
+    article_redirect($artId);
 }
 
 // 全局评论开关: 0=关闭, 1=免登录评论, 2=仅登录会员评论
@@ -159,7 +182,7 @@ if ($url !== '') {
 // 父评论校验
 if ($parent > 0) {
     $parentRow = $DB->get_row(
-        "SELECT `com_id` FROM `lylme_article_comment` WHERE `com_id` = {$parent} AND `art_id` = {$artId} LIMIT 1"
+        "SELECT `com_id` FROM `lylme_article_comment` WHERE `com_id` = {$parent} AND `art_id` = {$artId} AND `com_type` = {$comType} LIMIT 1"
     );
     if (!$parentRow) {
         $parent = 0;
@@ -202,6 +225,7 @@ $comStatus = ($audit && !$isAdmin) ? 0 : 1;
 // 入库(值由 insert_array 统一转义)
 $insertData = [
     'art_id'     => $artId,
+    'com_type'   => $comType,
     'com_pid'    => $parent,
     'com_name'   => $author,
     'com_email'  => $mail,
@@ -216,11 +240,15 @@ $insertData = [
 
 $inserted = $DB->insert_array('lylme_article_comment', $insertData);
 if ($inserted) {
-    // 更新文章评论数(仅统计已通过)
+    // 更新评论数(仅统计已通过)
     $commentCount = intval($DB->get_column(
-        "SELECT COUNT(*) FROM `lylme_article_comment` WHERE `art_id` = {$artId} AND `com_status` = 1"
+        "SELECT COUNT(*) FROM `lylme_article_comment` WHERE `art_id` = {$artId} AND `com_type` = {$comType} AND `com_status` = 1"
     ));
-    $DB->query("UPDATE `lylme_article` SET `art_comments` = {$commentCount} WHERE `art_id` = {$artId}");
+    if ($comType === 1) {
+        $DB->query("UPDATE `lylme_links` SET `comments` = {$commentCount} WHERE `id` = {$artId}");
+    } else {
+        $DB->query("UPDATE `lylme_article` SET `art_comments` = {$commentCount} WHERE `art_id` = {$artId}");
+    }
 
     // 记住访客信息(cookie): 仅游客; 登录会员/管理员身份取自账号无需记忆
     if ($isGuest) {

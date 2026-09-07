@@ -270,7 +270,7 @@ class Archive extends BaseWidget
                 break;
             case 'single':
             case 'post':
-                $result = $this->archiveSingle && $this->archiveType === 'post';
+                $result = $this->archiveSingle && in_array($this->archiveType, ['post', 'site'], true);
                 break;
             case 'category':
                 $result = $this->archiveType === 'category';
@@ -375,6 +375,10 @@ class Archive extends BaseWidget
      */
     public function getPermalink($slugs = '')
     {
+        // 导航链接详情页: 使用链接固定链接(/article/siteN.html)
+        if ($this->archiveType === 'site') {
+            return App::siteUrl($this->row);
+        }
         // 独立页面: 始终使用页面链接(与所处归档上下文无关)
         if ($this->archiveType === 'page') {
             return App::pageUrl($this->row);
@@ -735,6 +739,7 @@ class Archive extends BaseWidget
         $comments = new CommentsWidget([
             'parentId' => intval(isset($this->row['art_id']) ? $this->row['art_id'] : 0),
             'allowComment' => $allowComment ? 1 : 0,
+            'type' => ($this->archiveType === 'site') ? 1 : 0,
             'parentContent' => $this,
         ]);
         return $comments;
@@ -868,6 +873,13 @@ class Archive extends BaseWidget
             $file = 'post.php';
             if (!is_file(App::$themeDir . 'post.php')) {
                 $file = 'index.php';
+            }
+        } elseif ($this->archiveType === 'site') {
+            $file = 'site.php';
+            if (!is_file(App::$themeDir . 'site.php')) {
+                // 主题未提供 site.php 时, 回退到文章模板(post.php → index.php),
+                // 复用主题标准 comments.php, 保证链接评论在任意主题下都可用
+                $file = (is_file(App::$themeDir . 'post.php')) ? 'post.php' : 'index.php';
             }
         } elseif ($this->archiveType === 'category' || $this->archiveType === 'search') {
             $file = 'index.php';

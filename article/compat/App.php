@@ -227,6 +227,26 @@ class App
     }
 
     /**
+     * 生成导航链接详情页固定链接
+     * 与 postUrl 同构, 但使用 site 前缀以区分文章:
+     *   非伪静态 -> /article/index.php?site={id}
+     *   伪静态   -> /article/site{id}.html
+     * @param array $row 链接行(art_id / id)
+     */
+    public static function siteUrl($row)
+    {
+        $id = intval(is_array($row)
+            ? (isset($row['art_id']) ? $row['art_id'] : (isset($row['id']) ? $row['id'] : 0))
+            : 0);
+
+        if (!self::isRewrite()) {
+            return self::$articleUrl . 'index.php?site=' . $id;
+        }
+
+        return self::$articleUrl . 'site' . $id . '.html';
+    }
+
+    /**
      * 生成独立页面固定链接
      * @param array $row 页面行(page_slug / art_slug)
      */

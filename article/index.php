@@ -130,6 +130,8 @@ if (isset($_GET['rewrite']) && trim((string) $_GET['rewrite']) !== '') {
         $_GET['page'] = $m[1];
     } elseif (preg_match('/^post(\d+)$/i', $rewritePath, $m)) {
         $_GET['id'] = intval($m[1]);
+    } elseif (preg_match('/^site(\d+)$/i', $rewritePath, $m)) {
+        $_GET['site'] = intval($m[1]);
     } elseif (preg_match('/^\d+$/', $rewritePath)) {
         $_GET['id'] = intval($rewritePath);
     } else {
@@ -147,9 +149,13 @@ if (isset($_GET['rewrite']) && trim((string) $_GET['rewrite']) !== '') {
 }
 
 // ---------- 路由 ----------
+$siteId = isset($_GET['site']) ? intval($_GET['site']) : 0;
 $artId = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-if ($artId > 0) {
+if ($siteId > 0) {
+    // 导航链接详情页(由博客模块渲染, 复用主题与评论系统)
+    require __DIR__ . '/site_route.php';
+} elseif ($artId > 0) {
     // 单篇文章
     $row = $DB->get_row(
         "SELECT * FROM `lylme_article` WHERE `art_id` = {$artId} AND `art_status` = 1"
