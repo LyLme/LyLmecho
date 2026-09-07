@@ -7,8 +7,8 @@ RewriteRule ^sitemap.xml$ /site/sitemap.php
 
 # 关于本站 / 访问管理 / 申请收录: 复用博客主题渲染(目录入口; 提交/获取接口仍由对应 index.php 处理)
 RewriteRule ^about/?$ /article/index.php?page=about [L,QSA]
-RewriteRule ^pwd/?$   /article/index.php?page=pwd   [L,QSA]
-RewriteRule ^apply/?$ /article/index.php?page=apply [L,QSA]
+RewriteRule ^pwd/?$   /article/index.php?route=pwd   [L,QSA]
+RewriteRule ^apply/?$ /article/index.php?route=apply [L,QSA]
 
 # 文章模块前端重写(排除真实文件/目录, 避免把主题静态资源误当文章)
 RewriteCond %{REQUEST_FILENAME} !-f
