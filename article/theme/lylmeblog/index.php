@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 首页 / 分类 / 搜索 / 月份归档 列表
+ * LyLme Blog 主题 - 首页 / 分类 / 搜索 / 月份归档 列表
  * (Compat\Archive 将 index/category/search/month 四种归档都路由到本模板)
  */
 $this->need('header.php');

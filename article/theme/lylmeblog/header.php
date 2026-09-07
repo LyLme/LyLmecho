@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 头部
+ * LyLme Blog 主题 - 头部
  * 复用后台 (Lightyear) 布局基座, 由 style.css 升级为现代皮肤。
  */
 $lylme_home      = (string) (isset($this->options->siteUrl) ? $this->options->siteUrl : '/article/');

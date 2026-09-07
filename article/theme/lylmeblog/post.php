@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 单篇文章
+ * LyLme Blog 主题 - 单篇文章
  */
 $this->need('header.php');
 

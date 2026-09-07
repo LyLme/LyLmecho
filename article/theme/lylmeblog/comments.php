@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 评论区
+ * LyLme Blog 主题 - 评论区
  * 依赖 Compat\CommentsWidget 生成 .comment-list / .comment-body / .comment-author / .comment-children 结构。
  * 依赖主题 main.js 中的 TypechoComment.reply / cancelReply 完成"回复挂到本条下方"的表单迁移。
  */

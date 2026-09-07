@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 404
+ * LyLme Blog 主题 - 404
  */
 $this->need('header.php');
 $lylme_home = (string) (isset($this->options->siteUrl) ? $this->options->siteUrl : '/article/');

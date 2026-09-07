@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 右侧栏 (小工具区)
+ * LyLme Blog 主题 - 右侧栏 (小工具区)
  * 结构: 站点/作者卡 → 分类 → 标签云 → 热门内容 → 最新评论 → 站点统计
  * 每个模块独立受 themeConfig 的 lylmeBlocks 开关控制。
  */

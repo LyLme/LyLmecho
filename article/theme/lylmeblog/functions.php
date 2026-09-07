@@ -1,6 +1,6 @@
 <?php
 /**
- * LyLme Modern 主题 - 函数与主题配置
+ * LyLme Blog 主题 - 函数与主题配置
  *
  * 说明:
  *   - 复用后台 (Lightyear Admin) 的 Bootstrap 5 + MDI + style.min.css 设计基座,

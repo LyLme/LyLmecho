@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 独立页面
+ * LyLme Blog 主题 - 独立页面
  * (archiveType = page, 由 Compat\Archive 在独立页面路由时渲染)
  */
 $this->need('header.php');

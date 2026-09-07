@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <?php
 /**
- * LyLme Modern 主题 - 页脚
+ * LyLme Blog 主题 - 页脚
  * 调用约定: 需先由页面模板关闭 #lylme-main (col-lg-8)、插入 sidebar (col-lg-4),
  * 再引入本文件; 本文件负责 row/container/main 的收尾与页脚/脚本。
  */

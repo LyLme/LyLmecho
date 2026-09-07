@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /*
- * LyLme Modern 主题 - 现代皮肤覆写
+ * LyLme Blog 主题 - 现代皮肤覆写
  * 基座: 后台 Lightyear Admin (Bootstrap 5 + MDI + style.min.css)
  * 策略: 复用 lyear 布局几何(侧栏 240 / 顶栏 68 / 内容内缩), 仅重绘视觉为现代风格:
  *       圆角 / 柔和阴影 / 玻璃拟态 / 明暗双模 / 微交互。
@@ -983,4 +983,99 @@ html.lylme-theming .lylme-post-content,
 html.lylme-theming .lylme-toc,
 html.lylme-theming .lylme-respond {
     transition: background-color 0.28s ease, color 0.28s ease, border-color 0.28s ease;
+}
+
+/* ============================================================
+   11. 导航链接详情页 (site.php)
+   ============================================================ */
+.lylme-site-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.4rem 0 1.1rem;
+}
+.lylme-site-logo {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--lylme-radius);
+    overflow: hidden;
+    background: var(--lylme-surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--lylme-shadow-1);
+}
+.lylme-site-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.lylme-site-titles { min-width: 0; }
+.lylme-site-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--lylme-heading);
+    margin: 0 0 0.3rem;
+    word-break: break-word;
+}
+.lylme-site-desc {
+    margin: 0;
+    color: var(--lylme-text-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.lylme-site-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.4rem 0 1.2rem;
+}
+.lylme-qr-wrap { position: relative; display: inline-flex; }
+.lylme-qr-img {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    padding: 8px;
+    background: var(--lylme-surface);
+    border: 1px solid var(--lylme-border);
+    border-radius: var(--lylme-radius-sm);
+    box-shadow: var(--lylme-shadow-2);
+}
+.lylme-site-keywords {
+    color: var(--lylme-text-soft);
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+    word-break: break-word;
+}
+.lylme-site-info { margin-bottom: 1.25rem; }
+.lylme-info-list { list-style: none; margin: 0; padding: 0.5rem 0; }
+.lylme-info-list li {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.55rem 1.1rem;
+    border-bottom: 1px solid var(--lylme-border);
+    font-size: 0.92rem;
+}
+.lylme-info-list li:last-child { border-bottom: none; }
+.lylme-info-list .info-label {
+    flex: 0 0 6.5rem;
+    color: var(--lylme-text-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.lylme-info-list .info-value {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--lylme-heading);
+    word-break: break-all;
+}
+.lylme-site-shot .lylme-shot-img img {
+    width: 100%;
+    border-radius: var(--lylme-radius-sm);
+    border: 1px solid var(--lylme-border);
+    margin-top: 0.4rem;
 }

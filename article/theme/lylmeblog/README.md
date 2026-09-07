@@ -1,4 +1,4 @@
-# LyLme Modern 主题
+# LyLme Blog 主题
 
 六零导航页`文章站点`的现代风格前端主题。Bootstrap 5 + Material Design Icons + `style.min.css` 设计基座，再以 `style.css` 覆写为圆角 / 玻璃拟态 / 微交互的现代阅读皮肤。
 
@@ -22,7 +22,7 @@
 ## 目录结构
 
 ```
-article/theme/lylme/
+article/theme/lylmeblog/
 ├── READMEmd            # 本文档
 ├── index.php           # 首页 / 分类 / 搜索 / 月份归档 列表
 ├── post.php            # 单篇文章
@@ -40,7 +40,7 @@ article/theme/lylme/
 
 ## 安装与启用
 
-1. 将主题目录 `lylme/` 放置在 `article/theme/` 下。
+1. 将主题目录 `lylmeblog/` 放置在 `article/theme/` 下。
 2. 登录后台，进入「文章主题 -> 主题管理」，启用 **LyLme**。
 3. 进入「主题自定义设置」按需填写配置并保存。
 4. 前台访问文章站点即可看到效果。
@@ -148,7 +148,7 @@ article/theme/lylme/
 
 ## 版本
 
-- 主题：`1.0`
-- 交互脚本：`1.0 / 2026-09-05`
+- 主题：lylmeblog `1.0`
+- 交互脚本：`2.0 / 2026-09-07`
 - 作者：LyLme
 - 主页：https://github.com/LyLme/

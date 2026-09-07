@@ -1,5 +1,5 @@
 /*!
- * LyLme Modern 主题 - 交互脚本
+ * LyLme Blog 主题 - 交互脚本
  * 依赖: 已加载 jQuery / Bootstrap bundle / PerfectScrollbar / main.min.js (后台基座)
  * 本脚本用原生 JS, 与基座互不干扰; 兼容层未定义的 TypechoComment 在此实现。
  * 版本 1.0 / 2026-09-05
