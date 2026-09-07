@@ -1,4 +1,5 @@
 <?php
+
 /**
  * lyLmecho 默认主题 lylmeblog —— 主题自定义配置
  *
@@ -51,11 +52,10 @@ $theme_config = array(
         'name'  => 'modules',
         'title' => '首页显示模块',
         'description' => '可多选。blog 控制全部「博客联动」区块（关于卡、最新文章、热门、分类、RSS 等）',
-        'value' => array('blog', 'hot','clock'),
+        'value' => array('blog', 'hot'),
         'enum'  => array(
             'blog' => '博客联动区块',
             'hot'  => '热门文章榜',
-            'clock'=> '顶栏时间显示',
         ),
     ),
     array(
@@ -83,5 +83,22 @@ $theme_config = array(
         'value' => '',
         'placeholder' => '京公安网备xxxxxxxxxx号',
     ),
-
+    [
+        'type' => 'select',
+        'name' => 'lytoday',
+        'title' => '今日热榜',
+        'description' => 'LyToday-JS插件显示位置，每日免费请求上限200次 <a href="https://doc.lylme.com/spage/#/lytoday-js" target="_blank">查看文档</a>',
+        "value" => 0,
+        'enum' => [
+            0 => "关闭",
+            1 => "显示"
+        ],
+    ],
+    [
+        'type' => 'textarea',
+        'name' => 'lytodaycode',
+        'title' => '今日热榜代码',
+        'description' => 'LyToday-JS插件自定义代码，若不了解请勿修改 <a href="https://doc.lylme.com/spage/#/lytoday-js" target="_blank">查看文档</a>',
+        'value' => '<div id="lytoday"></div><script src="https://lytoday.lylme.com/"></script>',
+    ],
 );

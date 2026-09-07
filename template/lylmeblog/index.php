@@ -238,7 +238,7 @@ function lylmeblog_engine_icon($engine)
                                     <a href="<?php echo theme_e($blogFeed); ?>" target="_blank" rel="noopener"><i class="mdi mdi-rss"></i>RSS 订阅</a>
                                 </li>
                             <?php endif; ?>
-                        
+
                         </ul>
                     </nav>
 
@@ -332,7 +332,9 @@ function lylmeblog_engine_icon($engine)
                                                             $oName  = isset($engOpt['name']) ? (string) $engOpt['name'] : '搜索';
                                                             $oColor = isset($engOpt['color']) ? (string) $engOpt['color'] : '';
                                                             $oIsDef = $oAlias === $souDefaultAlias;
-                                                            if ($oMode === 'filter') { continue; }
+                                                            if ($oMode === 'filter') {
+                                                                continue;
+                                                            }
                                                             ?>
                                                             <button type="button" class="lhp-eng-opt<?php echo $oMode === 'filter' ? ' is-filter' : ''; ?>"
                                                                 role="option"
@@ -524,7 +526,9 @@ function lylmeblog_engine_icon($engine)
                                         </div>
                                     </div>
                                 <?php endif; ?>
-
+                                <?php if (theme_config('lytoday', 0) == 1) {
+                                    echo theme_config('lytodaycode');
+                                } ?>
                             </div>
                             <!-- ==================== End 博客联动侧栏 ==================== -->
                         <?php endif; ?>
