@@ -461,7 +461,25 @@ function rearr($data, $arr)
     $url = '';
     if (isset($data['url'])) {
         $mode = isset($GLOBALS['conf']['mode']) ? $GLOBALS['conf']['mode'] : 1;
-        $url = ($mode == 2 && isset($data['id'])) ? "/site-" . $data['id'] . ".html" : $data['url'];
+        if ($mode == 2 && isset($data['id'])) {
+            // 详情页模式: 链接指向博客模块的链接详情页(由博客渲染, 共享主题与评论)
+            static $siteUrlStyle = null;
+            if ($siteUrlStyle === null) {
+                $siteUrlStyle = '';
+                if (isset($GLOBALS['DB']) && is_object($GLOBALS['DB']) && method_exists($GLOBALS['DB'], 'get_row')) {
+                    $sr = $GLOBALS['DB']->get_row("SELECT `v` FROM `lylme_article_config` WHERE `k` = 'article_url_style' LIMIT 1");
+                    if (is_array($sr) && isset($sr['v'])) {
+                        $siteUrlStyle = $sr['v'];
+                    }
+                }
+            }
+            $lid = intval($data['id']);
+            $url = ($siteUrlStyle === '' || $siteUrlStyle === 'default')
+                ? '/article/index.php?site=' . $lid
+                : '/article/site' . $lid . '.html';
+        } else {
+            $url = $data['url'];
+        }
     }
     $replacements['{link_url}'] = $url;
 
