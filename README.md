@@ -1,15 +1,15 @@
-# LyLmecho
+# 六零导航博客LyLmecho
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0-orange" alt="License"></a>
-  <img src="https://img.shields.io/badge/PHP-%3E%3D7.0-purple" alt="PHP">
+  <img src="https://img.shields.io/github/v/release/LyLme/lylmecho?label=version&cacheSeconds=3600">
+  <img src="https://img.shields.io/badge/PHP-%3E%3D7.2-purple" alt="PHP">
   <img src="https://img.shields.io/badge/MySQL-%3E%3D5.6-orange" alt="MySQL">
   <img src="https://img.shields.io/badge/基于-LyLme%20Spage-4f7cf7" alt="基于 LyLme Spage">
 </p>
 
-> **LyLmecho** 是导航页 **六零导航页 / LyLme Spage** 的**一个独立全新版本（独立仓库）**。它在完整保留六零导航页(LyLme Spage)能力的基础上，**主要新增了一套完整的「文章 / 博客」模块**，并为文章模块实现了 **Typecho 主题兼容层**，使 Typecho 生态的主题无需修改即可直接运行——导航与博客二合一，简约而不简单。
 
----
+> **LyLmecho** 是导航页 **六零导航页 / LyLme Spage** 的**一个独立全新版本（独立仓库）**。它在完整保留六零导航页(LyLme Spage)能力的基础上，**主要新增了一套完整的「文章 / 博客」模块**，并为文章模块实现了 **Typecho 主题兼容层**，使 Typecho 生态的主题无需修改即可直接运行——导航与博客二合一，简约而不简单。
 
 ## 功能特性
 
@@ -25,10 +25,11 @@
 
 ### 新增：导航 × 博客 联动主题（默认主题 `template/lylmeblog/`）
 
-- 安装默认主题即为 `lylmeblog`：与博客模块默认主题共用同一套皮肤（Lightyear 基座 + LyLme Modern），站点首页（`/`）与博客页（`/article/`）视觉完全同源，博客不再是"另一个站点"
+- 安装默认主题即为 `lylmeblog`：与博客模块默认主题共用同一套皮肤（lylmeblog），站点首页（`/`）与博客页（`/article/`）视觉完全同源，博客不再是"另一个站点"
 - 首页原生内嵌博客联动区块：最新文章 / 热门文章 / 文章分类 / 博客信息卡，并配套博客直达与 RSS 入口
 - Hero 搜索区提供「搜索引擎 / 站内检索 / 博客文章」三种模式，支持在已收录链接中即时过滤
 - 博客端侧栏 / 页脚同步提供「返回导航首页」互链，形成导航 ⇄ 博客双向闭环
+- 导航站的「关于本站 / 访问管理 / 申请收录 / 导航链接详情」等场景同样复用博客主题渲染（含评论能力），全站视觉同源
 
 ### 新增：文章 / 博客模块（`article/`）
 
@@ -38,6 +39,7 @@
 | **编辑器** | Vditor 富文本编辑器编写，保存 Markdown 源码，前台自动渲染（内置自包含 `Markdown` 渲染器） |
 | **独立页面** | 支持「关于本站」等单页，前台 `?page=slug` / 伪静态 `/page/{slug}.html`，参与导航菜单 |
 | **评论系统** | 三态开关（关闭 / 免登录 / 仅登录）、评论审核、嵌套回复、管理员回复、计数同步、提交限流与防刷 |
+| **站点页面整合** | 「关于本站 / 访问管理 / 申请收录」可交由博客主题渲染（`?page=about` / `?route=pwd` / `?route=apply`），导航链接详情页亦复用博客主题与评论（`?site=`），数据与文章表相互独立 |
 | **订阅输出** | 内置 RSS 2.0 / Atom / 评论订阅三种 feed 端点 |
 | **URL 链接风格** | 5 种风格（default / post_id / id / slug / custom 自定义模板），前后台实时预览，伪静态规则一键复制 |
 | **前台会员体系** | 自助注册、邮箱验证（内置自包含 SMTP 发信）、登录/个人中心、记住登录、暴破限流 |
@@ -47,18 +49,18 @@
 
 ### 核心亮点：Typecho 主题兼容层（`article/compat/`）
 
-文章模块并非自建一套模板接口，而是实现了一个 **Typecho 兼容层**（约 16 个文件，覆盖 `Widget/Archive/Options/Db/Helper/Request/Form` 等 Typecho 主题常用 API），因此：
+文章模块并非自建一套模板接口，而是实现了一个 **Typecho 兼容层**（18 个文件，覆盖 `Widget_Archive / Options / Db / User / Stat / Comments / Sidebar` 等 Typecho 主题常用 API），因此：
 
 - 绝大多数 **Typecho 主题可直接放入 `article/theme/` 并后台一键切换**，无需改动
 - 兼容 `index.php / post.php / page.php / comments.php / sidebar.php / functions.php` 等主题文件约定
-- 内置 `lylme` 默认主题，开箱即用
+- 内置 `lylmeblog` 默认主题（与导航端默认模板同名同源），开箱即用
 - 详细实现与覆盖度说明见 [Typecho 兼容层对照与 API 清单](article/Typecho兼容层对照与API清单.md)
 
 ## 环境要求
 
 | 组件 | 要求 |
 | --- | --- |
-| PHP | 导航内核 >= 5.6；**文章模块 / 兼容层要求 >= 7.0**（推荐 7.4 / 8.x） |
+| PHP | 导航内核 >= 5.6；**文章模块 / 兼容层要求 >= 7.2**（推荐 7.4 / 8.x） |
 | MySQL | >= 5.6（推荐 5.7+） |
 | Web 服务器 | Apache / Nginx |
 
@@ -71,19 +73,39 @@
 1. 将项目源码上传至网站根目录
 2. 访问 `http://域名/install`，按提示配置数据库完成安装
 3. 后台地址：`http://域名/admin`，默认账号密码：`admin` / `123456`
-4. 进入后台「文章 → 模块配置」，开启「文章模块开关」，即可开始写文章
+4. 进入后台「博客管理 → 基础设置」，在「基本设置」中开启「文章模块开关」，即可开始写文章
 
-### 从既有六零导航页升级
 
-已部署 LyLme Spage 的站点，接入文章模块只需两步：
-
-1. 用 `install/data/install_struct.sql` 中新增的建表语句，补齐文章模块所需的 6 张数据表
-2. 将程序文件升级到本分支（`include/version.php` 版本号抬升后，访问任意页面会自动触发 `include/updbase.php` 增量升级）
-
-### 伪静态
+### 伪静态(建议开启)
 
 - `.htaccess`（Apache）与 `nginx.htaccess`（Nginx）均已内置文章模块的伪静态规则
-- 在后台「文章 → 模块配置 → 链接设置」选择 URL 风格后，Apache 开启 Rewrite 即可；Nginx 请参照 `nginx.htaccess` 中的注释把规则加入站点配置
+- 在后台「博客管理 → 基础设置」的「链接设置」页选择 URL 风格后，Apache 开启 Rewrite 即可；Nginx 请参照 `nginx.htaccess` 中的注释把规则加入站点配置
+
+#### Nginx伪静态规则
+
+```nginx
+rewrite ^/site-(\d+)\.html$ /site/index.php?id=$1 last;
+rewrite ^/sitemap.xml$ /site/sitemap.php last;
+rewrite ^/about/?$ /article/index.php?page=about last;
+rewrite ^/pwd/?$   /article/index.php?route=pwd   last;
+rewrite ^/apply/?$ /article/index.php?route=apply last;
+rewrite ^/article/([^.]*)$ /article/index.php?rewrite=$1&$args last;
+```
+
+#### Apache伪静态规则
+
+```apache
+RewriteEngine On
+#RewriteBase /
+RewriteRule ^site-(\d+)\.html$ /site/index.php?id=$1
+RewriteRule ^sitemap.xml$ /site/sitemap.php
+RewriteRule ^about/?$ /article/index.php?page=about [L,QSA]
+RewriteRule ^pwd/?$   /article/index.php?route=pwd   [L,QSA]
+RewriteRule ^apply/?$ /article/index.php?route=apply [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^article/(.*)$ /article/index.php?rewrite=$1 [L,QSA]
+```
 
 ## 目录结构
 
@@ -101,7 +123,8 @@ LyLmecho/
 │   ├── article_plugin.php    #   Typecho 插件管理
 │   ├── article_member.php    #   前台会员管理
 │   ├── ajax_article.php      #   文章模块统一 AJAX 接口
-│   └── head.php              #   后台公共头部（侧边栏已挂「文章」菜单）
+│   └── head.php              #   后台公共头部（侧边栏已挂「博客管理」菜单）
+├── blog/                     # /blog 快捷入口（访问 /blog 及其子路径 301 跳转至 /article/ 对应地址）
 ├── article/                  # ★ 文章 / 博客模块
 │   ├── index.php             #   前台入口 + 路由分发
 │   ├── common.php            #   公共初始化（加载核心 + 兼容层）
@@ -110,7 +133,7 @@ LyLmecho/
 │   ├── member.php            #   前台会员：登录 / 注册 / 个人中心
 │   ├── member_post.php       #   前台投稿（含草稿 / 预览）
 │   ├── member_moderate.php   #   编辑审核工作台（投稿 / 评论）
-│   ├── compat/               #   Typecho 兼容层（16 个文件）
+│   ├── compat/               #   Typecho 兼容层（18 个文件）
 │   │   ├── bootstrap.php     #     兼容层加载入口（别名 / 常量 / 全局函数）
 │   │   ├── App.php           #     应用容器：主题目录、URL 重写、链接生成
 │   │   ├── Archive.php       #     Widget_Archive 主组件（主题中的 $this）
@@ -119,19 +142,21 @@ LyLmecho/
 │   │   ├── Markdown.php      #     自包含 Markdown → HTML 渲染器
 │   │   ├── Mailer.php        #     自包含 SMTP 客户端
 │   │   ├── Member.php        #     会员核心类
+│   │   ├── pwd_form.php      #     访问管理表单（博客主题渲染）
+│   │   ├── apply_form.php    #     申请收录表单（博客主题渲染）
 │   │   └── ...               #     Options / BaseWidget / User / Author /
 │   │                         #     Stat / CommentsWidget / SidebarWidgets /
 │   │                         #     PluginManager
-│   ├── theme/                #   文章主题（内置 lylme；放置任意 Typecho 主题可后台切换）
+│   ├── theme/                #   文章主题（内置 lylmeblog；放置任意 Typecho 主题可后台切换）
 │   ├── plugins/              #   Typecho 插件目录
 │   └── config/               #   主题 / 插件配置持久化（JSON）
 ├── install/data/install_struct.sql  # 安装结构（含文章模块 6 张表）
 ├── include/
-│   ├── version.php           # 版本号（v2.7.1）
+│   ├── version.php           # 版本号
 │   └── updbase.php           # 数据库升级脚本（含文章模块增量升级）
 ├── .htaccess                 # Apache 伪静态（含文章模块规则）
 ├── nginx.htaccess            # Nginx 伪静态（含文章模块规则）
-└── template/                 # 导航主题（上游，default / ltab / liquidglass 等）
+└── template/                 # 导航主题（默认模板 lylmeblog，与文章主题同源皮肤）
 ```
 
 ## 文章模块路由
@@ -144,11 +169,14 @@ LyLmecho/
 | `?month=YYYY-MM` | 按月归档 |
 | `?page=N` | 分页 |
 | `?page=slug` | 独立页面（slug 为非数字，避免与分页冲突） |
+| `?site=xx` | 导航链接详情页（复用博客主题与评论系统渲染，数据独立于文章表） |
+| `?route=pwd` / `?route=apply` | 访问管理 / 申请收录（以博客主题页渲染） |
 | `?comment=xx`（POST） | 评论提交 |
 | `?feed=rss\|atom\|comments\|rdf` | 订阅输出 |
 | `?member=...` | 登录 / 注册 / 个人中心 / 投稿 / 审核 |
 
-> 文章地址受「链接风格」影响：启用伪静态后可呈现 `post1.html`、`1.html`、`hello-world.html` 等形态。
+> 文章地址受「链接风格」影响：启用伪静态后可呈现 `post1.html`、`1.html`、`hello-world.html`、`site1.html` 等形态。
+> 启用伪静态后，导航站的 `/about`（渲染后台「关于页面设置」内容）、`/pwd`、`/apply` 也会交由博客主题呈现，与独立目录并存（取决于 Web 服务器是否启用重写规则）；另有 `/blog` 快捷入口可 301 跳转至文章模块。
 
 ## 文章模块数据表
 
@@ -165,7 +193,6 @@ LyLmecho/
 
 | 文档 | 说明 |
 | --- | --- |
-| [文章模块开发进度](article/开发进度.md) | 模块开发历程、决策记录与验证结果 |
 | [Typecho 兼容层对照与 API 清单](article/Typecho兼容层对照与API清单.md) | 兼容层 API 对照、覆盖度与缺口、降级说明 |
 
 ## 与主仓库（lylme_spage）的关系
@@ -189,4 +216,4 @@ LyLmecho 是一个独立的全新仓库，区别于主仓库 [lylme_spage](https
 
 ---
 
-Copyright &copy; LyLmecho Contributors. 同源的 [LyLme Spage](https://github.com/LyLme/lylme_spage)（Apache-2.0）与 [Typecho](https://typecho.org)（GPL-2.0）版权归其各自作者所有。
+Copyright &copy; LyLmecho. 同源的 [LyLme Spage](https://github.com/LyLme/lylme_spage)（Apache-2.0）与 [Typecho](https://typecho.org)（GPL-2.0）版权归其各自作者所有。
