@@ -392,6 +392,12 @@ $set = isset($_GET['set']) ? $_GET['set'] : null;
 
 <?php include './footer.php'; ?>
 <link rel="stylesheet" href="/assets/admin/vditor/index.css">
+<style>
+/* Vditor 编辑区内边距为 JS 运行期内联生成, 用 !important 覆盖(仅编辑区、仅 PC 端) */
+@media (min-width: 768px) {
+  pre.vditor-reset[contenteditable="true"] { padding-left: 15px !important; padding-right: 15px !important; }
+}
+</style>
 <script src="/assets/admin/vditor/index.min.js"></script>
 <script>
 (function () {

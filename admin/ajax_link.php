@@ -32,6 +32,18 @@ function truncate_text($str, $max)
 	return $str;
 }
 
+// 升级兼容: 确保 lylme_links.link_content 列存在(前台文章页也会迁移, 后台保存需自行保证)
+try {
+    if (empty($DB->get_row("SHOW COLUMNS FROM `lylme_links` LIKE 'link_content'"))) {
+        $DB->query(
+            "ALTER TABLE `lylme_links` ADD COLUMN `link_content` MEDIUMTEXT "
+            . "COMMENT '链接详情长文(Markdown, 渲染在详情页正文下方)' AFTER `link_pwd`"
+        );
+    }
+} catch (\Exception $ex) {
+    // 无 ALTER 权限时由站长手动执行迁移 SQL, 不影响既有功能
+}
+
 switch ($submit) {
 
 
@@ -98,6 +110,7 @@ switch ($submit) {
 		$link_order = $linksrows + 1;
 		$link_desc = isset($_POST['link_desc']) ? daddslashes(truncate_text($_POST['link_desc'], 255)) : '';
 		$link_keywords = isset($_POST['link_keywords']) ? daddslashes(truncate_text($_POST['link_keywords'], 512)) : '';
+		$link_content = isset($_POST['link_content']) ? daddslashes($_POST['link_content']) : '';
 		if ($name == null or $url == null) {
 			json_response(100, '保存错误,请确保带星号的都不为空！');
 		} else {
@@ -118,7 +131,7 @@ switch ($submit) {
 				));
 				json_response(201, '链接已存在，跳过！ID=' . $exists['id'], $data);
 			}
-			$sql = "INSERT INTO `lylme_links` (`id`, `name`, `group_id`, `url`, `icon`, `link_desc`, `link_keywords`, `link_order`) VALUES (NULL, '" . $name1 . "', '" . $group_id . "', '" . $url . "', '" . $icon . "', '" . $link_desc . "', '" . $link_keywords . "', '" . $link_order . "');";
+			$sql = "INSERT INTO `lylme_links` (`id`, `name`, `group_id`, `url`, `icon`, `link_desc`, `link_keywords`, `link_order`, `link_content`) VALUES (NULL, '" . $name1 . "', '" . $group_id . "', '" . $url . "', '" . $icon . "', '" . $link_desc . "', '" . $link_keywords . "', '" . $link_order . "', '" . $link_content . "');";
 			if ($DB->query($sql)) {
 				$newid = $DB->insert_id();
 				json_response(200, '添加链接 ' . $name . ' 成功！', array('id' => $newid));
@@ -146,12 +159,13 @@ switch ($submit) {
 		$icon = daddslashes(isset($_POST['icon']) ? $_POST['icon'] : '');
 		$link_desc = isset($_POST['link_desc']) ? daddslashes(truncate_text($_POST['link_desc'], 255)) : '';
 		$link_keywords = isset($_POST['link_keywords']) ? daddslashes(truncate_text($_POST['link_keywords'], 512)) : '';
+		$link_content = isset($_POST['link_content']) ? daddslashes($_POST['link_content']) : '';
 		$link_pwd = intval($_POST['link_pwd']);
 		$group_id = intval($_POST['group_id']);
 		if ($name == null or $url == null) {
 			json_response(100, '保存错误,请确保带星号的都不为空！');
 		} else {
-			$sql = "UPDATE `lylme_links` SET `name` = '" . $name1 . "', `link_desc` = '" . $link_desc . "', `link_keywords` = '" . $link_keywords . "', `url` = '" . $url . "', `icon` = '" . $icon . "', `group_id` = '" . $group_id . "', `link_pwd` = " . $link_pwd . " WHERE `lylme_links`.`id` = '" . $id . "';";
+			$sql = "UPDATE `lylme_links` SET `name` = '" . $name1 . "', `link_desc` = '" . $link_desc . "', `link_keywords` = '" . $link_keywords . "', `url` = '" . $url . "', `icon` = '" . $icon . "', `group_id` = '" . $group_id . "', `link_pwd` = " . $link_pwd . ", `link_content` = '" . $link_content . "' WHERE `lylme_links`.`id` = '" . $id . "';";
 			if ($DB->query($sql)) {
 				json_response(200, '修改链接 ' . $name . ' 成功！');
 			} else {
@@ -361,6 +375,7 @@ switch ($submit) {
 			<link href="/assets/admin/css/materialdesignicons.min.css" rel="stylesheet">
 			<link href="/assets/admin/css/style.min.css?v=20260826" rel="stylesheet">
 			<link href="/assets/admin/css/coloris.min.css" rel="stylesheet">
+			<link href="/assets/admin/vditor/index.css" rel="stylesheet">
 			<style>
 				body {
 					background: #fff;
@@ -466,6 +481,13 @@ switch ($submit) {
 					<label for="edit_keywords">链接关键词:</label>
 					<input type="text" class="form-control" maxlength="512" id="edit_keywords" name="link_keywords" maxlength="512" placeholder="多个关键词用逗号分隔" value="<?php echo htmlspecialchars($row['link_keywords']); ?>">
 					<small class="help-block">关键词用于详情页 SEO，为空时访问详情页将自动采集写入</small>
+				</div>
+
+				<div class="form-group">
+					<label for="edit_link_content">链接详情长文(Markdown):</label>
+					<textarea id="edit_link_content" name="link_content" class="form-control" style="display:none" placeholder="支持 Markdown，可为空"><?php echo htmlspecialchars(isset($row['link_content']) ? $row['link_content'] : ''); ?></textarea>
+					<div id="vditorLinkIframe"></div>
+					<small class="help-block">以 Markdown 保存，渲染在链接详情页下方；可为空</small>
 				</div>
 
 				<div class="form-group" style="display:flex;gap:8px;margin-bottom:0">
@@ -635,6 +657,46 @@ switch ($submit) {
 					};
 					xhr.send(new FormData(form));
 				});
+			</script>
+			<script src="/assets/admin/vditor/index.min.js"></script>
+			<script>
+			(function () {
+				// 弹窗内链接详情长文编辑器(与后台文章编辑器共用 Vditor)
+				var ta = document.getElementById('edit_link_content');
+				if (!ta) return;
+				var editor = new Vditor('vditorLinkIframe', {
+					cdn: '/assets/admin/vditor/',
+					lang: 'zh_CN',
+					value: ta.value,
+					mode: 'ir',
+					theme: 'classic',
+					width: '100%',
+					height: 360,
+					minHeight: 240,
+					cache: { enable: false },
+					toolbar: ['emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|', 'list', 'ordered-list', 'check', '|', 'quote', 'code', 'table', '|', 'upload', 'undo', 'redo', '|', 'preview'],
+					upload: {
+						url: '/include/file.php?compress=1',
+						fieldName: 'file',
+						max: 5 * 1024 * 1024,
+						accept: 'image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.png,.gif,.webp',
+						filename: function (name) {
+							return name.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_');
+						},
+						format: function (files, responseText) {
+							var res;
+							try { res = JSON.parse(responseText); } catch (e) { res = null; }
+							var ok = !!res && (res.code === 200 || res.code === '200') && !!res.url;
+							return JSON.stringify({
+								msg: (res && res.msg) || '上传失败',
+								code: ok ? 0 : 1,
+								data: { errFiles: ok ? [] : [files[0].name], succMap: ok ? { [files[0].name]: res.url } : {} }
+							});
+						}
+					},
+					input: function (value) { ta.value = value; }
+				});
+			})();
 			</script>
 		</body>
 

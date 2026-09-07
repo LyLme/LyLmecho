@@ -82,6 +82,13 @@ $set = isset($_GET['set']) ? $_GET['set'] : null;
                 </div>
 
                 <div class="form-group">
+                  <label for="add_link_content">链接详情长文(Markdown):</label>
+                  <textarea id="add_link_content" name="link_content" class="form-control" style="display:none" placeholder="支持 Markdown，渲染在链接详情页正文下方，可为空"></textarea>
+                  <div id="vditorLinkAdd"></div>
+                  <small class="help-block">以 Markdown 保存，渲染为 HTML 展示在链接详情页下方；可为空</small>
+                </div>
+
+                <div class="form-group">
                   <input type="submit" class="btn btn-primary d-block w-100" value="添加">
                 </div>
               </form>
@@ -167,6 +174,13 @@ $set = isset($_GET['set']) ? $_GET['set'] : null;
                       <label for="edit_keywords">链接关键词:</label>
                       <input type="text" class="form-control" id="edit_keywords" name="link_keywords"  maxlength="512" placeholder="多个关键词用逗号分隔" value="<?php echo htmlspecialchars($row['link_keywords']); ?>">
                       <small class="help-block">关键词用于详情页 SEO，为空时访问详情页将自动采集写入</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="edit_link_content">链接详情长文(Markdown):</label>
+                      <textarea id="edit_link_content" name="link_content" class="form-control" style="display:none" placeholder="支持 Markdown，渲染在链接详情页正文下方，可为空"><?php echo htmlspecialchars(isset($row['link_content']) ? $row['link_content'] : ''); ?></textarea>
+                      <div id="vditorLinkEdit"></div>
+                      <small class="help-block">以 Markdown 保存，渲染为 HTML 展示在链接详情页下方；可为空</small>
                     </div>
 
                     <div class="form-group">
@@ -292,6 +306,86 @@ $set = isset($_GET['set']) ? $_GET['set'] : null;
   }
   bindFormAjax('addLinkForm');
   bindFormAjax('editLinkForm');
+</script>
+<link rel="stylesheet" href="/assets/admin/vditor/index.css">
+<style>
+/* Vditor 编辑区内边距为 JS 运行期内联生成, 用 !important 覆盖(仅编辑区、仅 PC 端) */
+@media (min-width: 768px) {
+  pre.vditor-reset[contenteditable="true"] { padding-left: 15px !important; padding-right: 15px !important; }
+}
+</style>
+<script src="/assets/admin/vditor/index.min.js"></script>
+<script>
+(function () {
+  // 链接详情长文编辑器(与文章编辑器共用同一套 Vditor 配置)
+  var VDITOR_CDN = '/assets/admin/vditor/';
+  var TOOLBAR = [
+    'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
+    'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
+    'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
+    'upload', 'table', '|',
+    'undo', 'redo', '|',
+    'fullscreen', 'edit-mode', 'preview', 'export'
+  ];
+  function createEditor(elId, ta) {
+    var editor = new Vditor(elId, {
+      cdn: VDITOR_CDN,
+      lang: 'zh_CN',
+      value: ta.value,
+      mode: 'ir',
+      theme: 'classic',
+      width: '100%',
+      height: 480,
+      minHeight: 320,
+      placeholder: '请输入链接详情长文，支持 Markdown 语法与 HTML 标签…',
+      cache: { enable: false },
+      tab: '\t',
+      counter: { enable: true, type: 'text' },
+      toolbar: TOOLBAR,
+      toolbarConfig: { pin: true },
+      preview: {
+        delay: 300,
+        theme: 'classic',
+        hljs: { lineNumber: true, style: 'github' },
+        math: { engine: 'KaTeX' },
+        markdown: { toc: true, mark: true, footnote: true, autoSpace: true, isOpen: true },
+        actions: ['desktop', 'tablet', 'mobile', 'both', 'outline', 'beautify']
+      },
+      hljs: { lineNumber: true, style: 'github' },
+      emoji: { enable: true },
+      upload: {
+        url: '/include/file.php?compress=1',
+        fieldName: 'file',
+        max: 5 * 1024 * 1024,
+        accept: 'image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.png,.gif,.webp',
+        filename: function (name) {
+          return name.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_');
+        },
+        format: function (files, responseText) {
+          var res;
+          try { res = JSON.parse(responseText); } catch (e) { res = null; }
+          var ok = !!res && (res.code === 200 || res.code === '200') && !!res.url;
+          return JSON.stringify({
+            msg: (res && res.msg) || '上传失败',
+            code: ok ? 0 : 1,
+            data: { errFiles: ok ? [] : [files[0].name], succMap: ok ? { [files[0].name]: res.url } : {} }
+          });
+        }
+      },
+      after: function () {
+        if (editor && typeof editor.getValue === 'function') ta.value = editor.getValue();
+      },
+      input: function (value) { ta.value = value; }
+    });
+    return editor;
+  }
+  if (document.getElementById('edit_link_content')) {
+    createEditor('vditorLinkEdit', document.getElementById('edit_link_content'));
+  }
+  if (document.getElementById('add_link_content')) {
+    createEditor('vditorLinkAdd', document.getElementById('add_link_content'));
+  }
+})();
 </script>
 <script type="text/javascript">
   //分组移动
