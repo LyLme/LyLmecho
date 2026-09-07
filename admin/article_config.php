@@ -81,6 +81,9 @@ $urlStyles = array(
                       <label class="radio-inline"><input type="radio" name="article_status" value="0" <?php echo (isset($configs['article_status']) && $configs['article_status'] == '0') ? ' checked' : ''; ?>> 关闭</label>
                     </div>
                     <small class="help-block">关闭后文章模块将不再对外提供服务</small>
+
+                       <div class="mt-2">文章首页地址：<code><?php echo siteurl(); ?>/article</code> <a href="<?php echo siteurl(); ?>/article" target="_blank">访问</a></div>
+       
                   </div>
                   <div class="form-group">
                     <label for="article_web_title">网站标题:</label>
