@@ -105,7 +105,7 @@ function lylmeblog_engine_icon($engine)
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo theme_e($title); ?><?php echo $desc !== '' ? ' - ' . theme_e($desc) : ''; ?></title>
+    <title><?php echo theme_e($title); ?></title>
     <meta name="description" content="<?php echo theme_e($desc !== '' ? $desc : '个人导航 / 快捷收录与博客'); ?>">
     <meta name="renderer" content="webkit">
     <meta name="force-rendering" content="webkit">
@@ -236,6 +236,26 @@ function lylmeblog_engine_icon($engine)
                             <?php if ($blogShow): ?>
                                 <li class="nav-item">
                                     <a href="<?php echo theme_e($blogFeed); ?>" target="_blank" rel="noopener"><i class="mdi mdi-rss"></i>RSS 订阅</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php
+                            // 站点自定义导航菜单(lylme_tags): 复用主题 theme_tags(), 与文章分类同款子菜单
+                            $tagsRows = theme_tags();
+                            if (!empty($tagsRows)): ?>
+                                <li class="nav-item nav-item-has-subnav">
+                                    <button type="button" class="nav-subnav-toggle" aria-controls="lylme-subnav-tags" aria-expanded="false">
+                                        <i class="mdi mdi-tag-outline"></i>标签导航
+                                    </button>
+                                    <ul class="nav nav-subnav" id="lylme-subnav-tags">
+                                        <?php foreach ($tagsRows as $tg): ?>
+                                            <li>
+                                                <a href="<?php echo theme_e($tg['link']); ?>"<?php echo !empty($tg['blank']) ? ' target="_blank" rel="noopener"' : ''; ?>>
+                                                    <?php echo theme_e($tg['name']); ?>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
                                 </li>
                             <?php endif; ?>
 

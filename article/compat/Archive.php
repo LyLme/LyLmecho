@@ -20,6 +20,9 @@ class Archive extends BaseWidget
     /** @var string 当前分类别名 */
     public $archiveSlug = '';
 
+    /** @var bool 兼容层注入的原生 HTML(page 路由)是否跳过 Markdown 渲染 */
+    public $rawHtml = false;
+
     /** @var string 归档标题 */
     public $archiveTitleStr = '';
 
@@ -316,6 +319,11 @@ class Archive extends BaseWidget
     public function content($more = null)
     {
         $content = isset($this->row['art_content']) ? $this->row['art_content'] : '';
+        // 兼容层注入的 page(如 ?route=apply/pwd): 原生 HTML 直接输出, 跳过 Markdown 以免破坏 <select>/<style>/<script> 等
+        if ($this->rawHtml && $this->archiveSingle && $this->archiveType === 'page') {
+            echo $content;
+            return;
+        }
         // 列表页截断到 <!--more--> 标签
         if (!$this->archiveSingle && strpos($content, '<!--more-->') !== false) {
             $pos = strpos($content, '<!--more-->');
@@ -908,6 +916,104 @@ class Archive extends BaseWidget
             echo '<!-- template not found: ' . htmlspecialchars($file) . ' -->';
             return;
         }
+        ob_start();
         $this->need($file);
+        $html = ob_get_clean();
+        echo $this->injectTagMenu($html);
+    }
+
+    /**
+     * 兼容层注入: 将 lylme_tags 标签导航插入主题输出, 不修改任何主题文件。
+     * 自动识别并注入以下导航结构:
+     *  - lylmeblog 侧栏 <ul class="nav nav-drawer">  → 折叠子菜单 <li class="nav-item-has-subnav">
+     *  - 默认主题    <nav id="nav-menu">            → 扁平 <a>
+     *  - classic-22  <ul class="nav-menu">          → <li><a></a></li>
+     */
+    protected function injectTagMenu($html)
+    {
+        if (!class_exists('\\Compat\\Widgets\\TagMenu')) {
+            return $html;
+        }
+        $menu = \Compat\Widgets\TagMenu::alloc();
+        if ($menu->length <= 0) {
+            return $html;
+        }
+
+        // lylmeblog 折叠子菜单 <li>(含嵌套 ul), 捕获 TagMenu::renderNav() 输出备用
+        ob_start();
+        $menu->renderNav();
+        $subnavLi = ob_get_clean();
+
+        // 扁平 <a> 与 <li><a></a></li>, 供其它主题使用
+        $flatA = '';
+        $liA   = '';
+        $menu->reset();
+        while ($menu->next()) {
+            $href   = isset($menu->row['permalink']) ? (string) $menu->row['permalink'] : '';
+            $name   = isset($menu->row['name']) ? (string) $menu->row['name'] : '';
+            $target = !empty($menu->row['target']);
+            $attr   = ($target ? ' target="_blank" rel="noopener"' : '')
+                    . ' title="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '"';
+            $escHref = htmlspecialchars($href, ENT_QUOTES, 'UTF-8');
+            $escName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+            $flatA .= '<a href="' . $escHref . '"' . $attr . '>' . $escName . '</a>';
+            $liA   .= '<li><a href="' . $escHref . '"' . $attr . '>' . $escName . '</a></li>';
+        }
+
+        // 1) lylmeblog 侧栏: 注入折叠子菜单 <li> 到 nav-drawer
+        if (preg_match('/<ul\b[^>]*\bclass="[^"]*nav-drawer[^"]*"[^>]*>/i', $html, $mu, PREG_OFFSET_CAPTURE)) {
+            $close = $this->findMatchingClose($html, $mu[0][1], strlen($mu[0][0]), '<ul', '</ul>');
+            if ($close !== false) {
+                $html = substr($html, 0, $close) . $subnavLi . substr($html, $close);
+            }
+        }
+
+        // 2) 默认主题: <nav id="nav-menu"> 内注入扁平 <a>
+        if (preg_match('/<nav\b[^>]*\bid="nav-menu"[^>]*>/i', $html, $mn, PREG_OFFSET_CAPTURE)) {
+            $close = $this->findMatchingClose($html, $mn[0][1], strlen($mn[0][0]), '<nav', '</nav>');
+            if ($close !== false) {
+                $html = substr($html, 0, $close) . $flatA . substr($html, $close);
+            }
+        }
+
+        // 3) classic-22: <ul class="nav-menu"> 内注入 <li><a></a></li>
+        if (preg_match('/<ul\b[^>]*\bclass="[^"]*nav-menu[^"]*"[^>]*>/i', $html, $mu2, PREG_OFFSET_CAPTURE)) {
+            $close = $this->findMatchingClose($html, $mu2[0][1], strlen($mu2[0][0]), '<ul', '</ul>');
+            if ($close !== false) {
+                $html = substr($html, 0, $close) . $liA . substr($html, $close);
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * 在 HTML 中从某个开标签位置找到其匹配的闭合标签位置(处理嵌套标签)
+     */
+    private function findMatchingClose($html, $openPos, $openLen, $openTag, $closeTag)
+    {
+        $depth = 1;
+        $i = $openPos + $openLen;
+        $len = strlen($html);
+        $openL = strlen($openTag);
+        $closeL = strlen($closeTag);
+        while ($i < $len && $depth > 0) {
+            $posOpen = strpos($html, $openTag, $i);
+            $posClose = strpos($html, $closeTag, $i);
+            if ($posClose === false) {
+                return false;
+            }
+            if ($posOpen !== false && $posOpen < $posClose) {
+                $depth++;
+                $i = $posOpen + $openL;
+            } else {
+                $depth--;
+                $i = $posClose + $closeL;
+                if ($depth === 0) {
+                    return $posClose;
+                }
+            }
+        }
+        return false;
     }
 }

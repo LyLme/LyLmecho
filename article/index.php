@@ -315,11 +315,62 @@ if ($siteId > 0) {
     $archive->pageSize = $pageSize;
     $archive->archiveTitleStr = $month . ' 的归档文章';
     $archive->archiveKeywords = '';
+} elseif (isset($_GET['route']) && trim((string) $_GET['route']) !== '' && in_array(trim((string) $_GET['route']), ['apply', 'pwd'], true)) {
+    // 申请收录 / 访问管理: 博客主题精简版(兼容层), 注入到博客页面渲染
+    $route = trim((string) $_GET['route']);
+    $compatFile = __DIR__ . '/compat/' . $route . '_form.php';
+    if (!is_file($compatFile)) {
+        $archive->setArchive('404', [], false);
+        $archive->archiveTitleStr = '404';
+        http_response_code(404);
+    } else {
+        ob_start();
+        include $compatFile;
+        $routeHtml = trim(preg_replace('/^\s*\n/m', '', ob_get_clean()));
+        if ($route === 'apply') {
+            // defer: 确保在博客 footer 的 jQuery 加载完成后再执行(layer/sweetalert 依赖 jQuery)
+            $routeHtml .= "\n" . '<script defer src="/assets/js/layer.js"></script>'
+                . "\n" . '<script defer src="/assets/js/sweetalert.min.js"></script>'
+                . "\n" . '<script defer src="/apply/apply.js"></script>';
+        }
+        $row = [
+            'art_id'      => 0,
+            'art_title'   => ($route === 'apply' ? '申请收录' : '访问管理'),
+            'art_slug'    => $route,
+            'art_content' => $routeHtml,
+            'art_excerpt' => '',
+            'art_author'  => '管理员',
+            'art_time'    => '',
+            'art_update'  => '',
+            'cat_id'      => 0,
+            'art_allow_comment' => 0,
+        ];
+        $archive->setArchive('page', [$row], true);
+        $archive->setTotal(1);
+        $archive->archiveTitleStr = $row['art_title'];
+        $archive->archiveSlug = $row['art_slug'];
+        // 兼容层注入的原生 HTML, 跳过 Markdown 渲染
+        $archive->rawHtml = true;
+    }
 } elseif (isset($_GET['page']) && trim((string) $_GET['page']) !== '' && !preg_match('/^\d+$/', (string) $_GET['page'])) {
     // 独立页面 (slug, 非数字以避免与首页分页 ?page=N 冲突)
     $pageSlug = trim((string) $_GET['page']);
     $pageSlugEscaped = $DB->escape($pageSlug);
     $prow = $DB->get_row("SELECT * FROM `lylme_article_page` WHERE `page_slug` = '{$pageSlugEscaped}' AND `page_status` = 1 LIMIT 1");
+    if (!$prow && $pageSlug === 'about') {
+        // 关于本站: 复用后台配置的 about_content, 以博客主题呈现(避免独立的 about 页面样式)
+        $prow = [
+            'page_id'      => 0,
+            'page_title'   => '关于本站',
+            'page_slug'    => 'about',
+            'page_content' => trim(preg_replace('/^\s*\n/m', '', isset($conf['about_content']) ? $conf['about_content'] : '')),
+            'page_excerpt' => '',
+            'page_time'    => '',
+            'page_update'  => '',
+            'page_status'  => 1,
+            'art_allow_comment' => 0,
+        ];
+    }
     if ($prow) {
         // 映射为 Archive 可识别的 art_* 字段
         $row = [
@@ -332,6 +383,7 @@ if ($siteId > 0) {
             'art_time'    => $prow['page_time'],
             'art_update'  => $prow['page_update'],
             'cat_id'      => 0,
+            'art_allow_comment' => isset($prow['art_allow_comment']) ? intval($prow['art_allow_comment']) : 1,
         ];
         $archive->setArchive('page', [$row], true);
         $archive->setTotal(1);

@@ -93,6 +93,10 @@ if (!class_exists('\Widget\Metas\Category\Rows', false)) {
 if (!class_exists('\Widget\Contents\Post\Date', false)) {
     class_alias('\Compat\Widgets\PostDate', 'Widget\Contents\Post\Date');
 }
+// 站点自定义导航菜单(lylme_tags): 经兼容层控件注入主题左侧导航, 与"独立页面"同款
+if (!class_exists('\Widget\Lylme\TagMenu', false)) {
+    class_alias('\Compat\Widgets\TagMenu', 'Widget\Lylme\TagMenu');
+}
 
 // === 补充命名空间别名 ===
 if (!class_exists('\Widget\Comments\Archive', false)) {

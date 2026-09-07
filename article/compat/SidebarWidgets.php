@@ -65,6 +65,77 @@ class PageRows extends BaseWidget
 }
 
 /**
+ * 站点自定义导航菜单(对应 lylme_tags 表)
+ * 供主题左侧导航以"独立页面"同款方式渲染:
+ *   \Widget\Lylme\TagMenu::alloc()->to($tagMenu)
+ * 每行暴露: name/title/slug(标签名), permalink/link(链接), target(1=新标签).
+ */
+class TagMenu extends BaseWidget
+{
+    protected function execute()
+    {
+        // 导航首项: 上网导航(指向站点首页)
+        $this->push([
+            'name'      => '上网导航',
+            'title'     => '上网导航',
+            'slug'      => '',
+            'permalink' => '/',
+            'link'      => '/',
+            'target'    => 0,
+        ]);
+
+        $result = $this->db->query(
+            "SELECT * FROM `lylme_tags` ORDER BY `sort` ASC, `tag_id` ASC"
+        );
+        if ($result) {
+            while ($row = $this->db->fetch($result)) {
+                // 补全 Typecho 主题常用字段名, 与 PageRows/CategoryRows 保持一致
+                $row['name']      = $row['tag_name'];
+                $row['title']     = $row['tag_name'];
+                $row['slug']      = $row['tag_name'];
+                $row['permalink'] = $row['tag_link'];
+                $row['link']      = $row['tag_link'];
+                $row['target']    = $row['tag_target'];
+                // 跳过指向文章模块首页的导航项(/article、/article/)
+                if ((string) $row['tag_link'] === '/article' || (string) $row['tag_link'] === '/article/') {
+                    continue;
+                }
+                $this->push($row);
+            }
+        }
+    }
+
+    /**
+     * 输出左侧导航的子菜单(<li> 块), 由主题以一行调用注入, 渲染标记不写在主题里。
+     * 与"文章分类/独立页面"在主题中的 render 等价, 但此处整段由兼容层控件负责。
+     *
+     * @param string $label    子菜单标题
+     * @param string $icon     mdi 图标类名
+     * @param string $subnavId 子菜单 ul 的 id
+     */
+    public function renderNav($label = '标签导航', $icon = 'mdi-tag-outline', $subnavId = 'lylme-subnav-tags')
+    {
+        if ($this->length <= 0) {
+            return;
+        }
+        echo '<li class="nav-item nav-item-has-subnav">'
+            . '<button type="button" class="nav-subnav-toggle" aria-controls="' . htmlspecialchars($subnavId, ENT_QUOTES, 'UTF-8') . '" aria-expanded="false">'
+            . '<i class="mdi ' . htmlspecialchars($icon, ENT_QUOTES, 'UTF-8') . '"></i>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</button>'
+            . '<ul class="nav nav-subnav" id="' . htmlspecialchars($subnavId, ENT_QUOTES, 'UTF-8') . '">';
+        $this->reset();
+        while ($this->next()) {
+            $href   = isset($this->row['permalink']) ? (string) $this->row['permalink'] : '';
+            $name   = isset($this->row['name']) ? (string) $this->row['name'] : '';
+            $target = !empty($this->row['target']);
+            echo '<li><a href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"'
+                . ($target ? ' target="_blank" rel="noopener"' : '') . '>'
+                . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</a></li>';
+        }
+        echo '</ul></li>';
+    }
+}
+
+/**
  * 最近评论
  */
 class RecentComments extends BaseWidget

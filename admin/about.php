@@ -19,7 +19,7 @@ if ($set== 'conf_submit') {
 }
 if ($set == 'default') {
 
-    saveSetting('about_content', "<h3>关于本站</h3>\r\n<p>欢迎访问本站，这是一个开源的网址导航与搜索入口项目，旨在提供简洁、轻量的上网起始页体验。</p>\r\n<p>如果您喜欢本站，可将本页添加到收藏夹（快捷键 <code>Ctrl+D</code>）方便下次访问；也可将其设为浏览器主页。感谢您的支持。</p>\r\n<hr>\r\n<h3>隐私说明</h3>\r\n<p>本项目为开源程序，默认仅提供网址导航与跳转功能，链接直接指向目标地址，不对访问链接做二次中转。</p>\r\n<p>程序本身不强制收集用户隐私信息（如点击记录、访问记录、搜索记录等）。但您所访问的具体实例由部署者自行搭建与维护，其实际的数据收集与处理方式以该实例部署者的隐私政策为准。建议您在使用前了解所在实例的相关说明，并注意保护个人信息。</p>\r\n<hr>\r\n<h3>申请收录</h3>\r\n<p>如需将您的网站加入导航，请点<a href=\"../apply\" target=\"_blank\">这里</a>提交申请。</p>\r\n<hr>\r\n<h3>联系我们</h3>\r\n<p>若您在使用本站时遇到了以下问题，欢迎与我们联系：</p>\r\n<ul>\r\n<li>图标缺失</li>\r\n<li>目标网站无法打开</li>\r\n<li>描述错误</li>\r\n<li>网站违规</li>\r\n<li>收录加急处理</li>\r\n<li>链接删除</li>\r\n</ul>\r\n<h5>联系方式</h5>\r\n<ul>\r\n<li>邮箱：<a href=\"mailto:#\">未配置</a></li>\r\n</ul>\r\n<h5>联系说明</h5>\r\n<p>为了您的问题能快速被处理，建议在邮件主题中添加【反馈】【投诉】【建议】【友链】等标识。</p>");
+    saveSetting('about_content', "# 关于本站\r\n\r\n本站是一个**轻量上网起始页 + 个人博客**：打开浏览器就能直达常用网站，顺手也能翻翻站长精选链接、写的测评、公告和折腾笔记。\r\n\r\n不花哨、不打扰，把它设成主页就够了。\r\n\r\n## 你能在这里做什么\r\n\r\n**① 一页直达常用网站**\r\n\r\n首页按分组整理了常用站点（工具、开发、设计、影音、学习等），点一下就走。链接直接指向目标地址，**不做任何二次中转**。\r\n\r\n**② 输入即搜**\r\n\r\n在顶部搜索框输入关键词回车即可。没被收录的站点，也可以直接在这里搜到。\r\n\r\n**③ 翻翻文章**\r\n\r\n站内文章板块记录了一些实用测评、站点公告和使用说明，有新内容会第一时间出现在这里。\r\n\r\n**④ 推荐你觉得好用的站**\r\n\r\n发现冷门又优质的网站？通过「申请收录」提交，通过后会归到对应分组里。\r\n\r\n## 收藏本站或设为浏览器主页\r\n\r\n- **收藏本站：**按`Ctrl`+`D`组合键可快速收藏本站\r\n- **设置主页：**浏览器打开设置→起始页面→打开特定网页或一组网页，填入本站地址\r\n- **Tip：**本站也对手机端进行了适配，手机浏览器也能用哦！\r\n\r\n## 关于隐私\r\n\r\n- 本站提供网址导航与跳转，链接默认直接指向目标地址，**也不因此产生跳转记录。**\r\n- 本站**不收集**你的点击、访问、搜索记录等隐私信息。\r\n- 但通过本站进入的外部站点，其数据收集与处理方式由对方决定。涉及账号、支付、个人信息时，建议先了解对方的相关说明。\r\n\r\n## 有问题、想提建议？\r\n\r\n- 推荐网站 / 链接失效 / 分类放错 → 站内「申请收录」或留言\r\n- 使用建议、体验吐槽 → 直接留言就行\r\n- 提交时加个【收录】【失效】【建议】【友链】前缀，并尽量写清复现步骤，处理速度会快很多\r\n\r\n## 版权与开源\r\n\r\n站内原创文章内容版权归本站所有，转载请注明出处。\r\n\r\n本站基于开源程序 **LyLmecho** 搭建（其上游为六零导航页 LyLme Spage），二者分别遵循 GPL-2.0 与 Apache-2.0 开源许可，在此致谢。");
     echo '<script>$.alert({title:"成功",content:"恢复默认成功！",buttons:{confirm:{text:"确定",btnClass:"btn-primary",action:function(){window.location.href="./about.php";}}}});</script>';
     exit();
 }
@@ -40,10 +40,10 @@ if ($set == 'default') {
                                     <a class="btn btn-danger" href="./about.php?set=default" onclick="var h=this.href;event.preventDefault();$.confirm({title:'警告',content:'确定将关于页面内容恢复默认？<br>注意：该操作不可逆',type:'red',buttons:{confirm:{text:'确定恢复',btnClass:'btn-danger',action:function(){window.location.href=h;}},cancel:{text:'取消'}}});return false;">恢复默认内容</a>
                                 </div>
                                 <div class="form-group">
-                                    <label for="about">关于页内容</label>
-                                    <textarea width="200px" type="text" rows="20" class="form-control" name="about" placeholder="显示在关于页面的内容"><?php echo($conf['about_content']); ?></textarea>
-                                    <small class="help-block">显示在关于页面的内容<code>使用HTML代码编写</code></small>
-                                    工具：<a href="https://www.lylme.com/html/" target="_blank">在线MD编辑器</a> 编辑后复制html代码粘贴
+                                    <label for="about_content">关于页内容</label>
+                                    <textarea id="about_content" name="about" class="form-control" rows="20" style="display:none" required><?php echo htmlspecialchars($conf['about_content']); ?></textarea>
+                                    <div id="vditorAbout"></div>
+                                    <small class="help-block">显示在关于页面的内容，支持 <code>Markdown</code> 语法（与文章/页面编辑器一致）</small>
                                 </div>
                                 <div class="form-about">
                                     <input type="submit" class="btn btn-primary d-block w-100" value="保存">
@@ -60,3 +60,62 @@ if ($set == 'default') {
 <?php
 include './footer.php';
 ?>
+<link rel="stylesheet" href="/assets/admin/vditor/index.css">
+<style>
+/* Vditor 编辑区内边距为 JS 运行期内联生成, 用 !important 覆盖(仅编辑区、仅 PC 端) */
+@media (min-width: 768px) {
+  pre.vditor-reset[contenteditable="true"] { padding-left: 15px !important; padding-right: 15px !important; }
+}
+</style>
+<script src="/assets/admin/vditor/index.min.js"></script>
+<script>
+(function () {
+  // 静态资源统一走本地 /assets/admin/vditor/dist/, 语言包、Lute、代码高亮、Emoji 等均不再外联
+  var VDITOR_CDN = '/assets/admin/vditor/';
+
+  var TOOLBAR = [
+    'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
+    'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
+    'quote', 'line', 'code', 'inline-code', '|',
+    'undo', 'redo', '|',
+    'fullscreen', 'edit-mode', 'preview', 'export'
+  ];
+
+  function createEditor(elId, ta) {
+    var editor = new Vditor(elId, {
+      cdn: VDITOR_CDN,
+      lang: 'zh_CN',
+      value: ta.value,
+      mode: 'ir',                 // ir 即时渲染 / sv 分屏 / wysiwyg 所见即所得
+      theme: 'classic',
+      width: '100%',
+      height: 460,
+      minHeight: 300,
+      placeholder: '请输入关于页面内容，支持 Markdown 语法…',
+      cache: { enable: false },
+      tab: '\t',
+      counter: { enable: true, type: 'text' },
+      toolbar: TOOLBAR,
+      toolbarConfig: { pin: true },
+      preview: {
+        delay: 300,
+        theme: 'classic',
+        hljs: { lineNumber: true, style: 'github' },
+        markdown: { toc: true, mark: true, footnote: true, autoSpace: true, isOpen: true }
+      },
+      hljs: { lineNumber: true, style: 'github' },
+      emoji: { enable: true },
+      after: function () {
+        // 注意：此处 this 不指向编辑器实例，须通过闭包引用 editor
+        if (editor && typeof editor.getValue === 'function') ta.value = editor.getValue();
+      },
+      input: function (value) { ta.value = value; }
+    });
+    return editor;
+  }
+
+  if (document.getElementById('about_content')) {
+    createEditor('vditorAbout', document.getElementById('about_content'));
+  }
+})();
+</script>
