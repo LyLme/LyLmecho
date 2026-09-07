@@ -1,6 +1,6 @@
 rewrite ^/site-(\d+)\.html$ /site/index.php?id=$1 last;
 rewrite ^/sitemap.xml$ /site/sitemap.php last;
-
-location /article/ {
-    try_files $uri $uri/ /article/index.php?rewrite=$uri&$args;
-}
+rewrite ^/about/$ /article/index.php?page=about last;
+rewrite ^/pwd/$   /article/index.php?page=pwd   last;
+rewrite ^/apply/$ /article/index.php?page=apply last;
+rewrite ^/article/([^.]*)$ /article/index.php?rewrite=$1&$args last;
