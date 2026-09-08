@@ -478,7 +478,7 @@ $set = isset($_GET['set']) ? $_GET['set'] : null;
 </script>
 <script type="text/javascript">
   // 新增/编辑表单 AJAX 提交（阻止默认跳转，弹窗显示服务端返回）
-  function bindFormAjax(formId) {
+  function bindFormAjax(formId, redirectUrl) {
     var form = document.getElementById(formId);
     if (!form) return;
     form.addEventListener('submit', function (event) {
@@ -487,18 +487,26 @@ $set = isset($_GET['set']) ? $_GET['set'] : null;
       xhr.open('POST', form.action, true);
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-          var res = JSON.parse(xhr.responseText);
+          var res;
+          try {
+            res = JSON.parse(xhr.responseText);
+          } catch (e) {
+            alert('保存失败：返回数据格式异常');
+            return;
+          }
           alert(res.msg);
           if (res.code === 200) {
-            location.href = './article.php';
+            location.href = redirectUrl || './article.php';
           }
         }
       };
       xhr.send(new FormData(form));
     });
   }
-  bindFormAjax('addArticleForm');
-  bindFormAjax('editArticleForm');
+  bindFormAjax('addArticleForm', './article.php');
+  bindFormAjax('editArticleForm', './article.php');
+  bindFormAjax('addPageForm', './article.php?set=page');
+  bindFormAjax('editPageForm', './article.php?set=page');
 </script>
 <script type="text/javascript">
   // 全选/取消全选
