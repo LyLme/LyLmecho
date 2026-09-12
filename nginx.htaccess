@@ -3,4 +3,6 @@ rewrite ^/sitemap.xml$ /site/sitemap.php last;
 rewrite ^/about/?$ /article/index.php?page=about last;
 rewrite ^/pwd/?$   /article/index.php?route=pwd   last;
 rewrite ^/apply/?$ /article/index.php?route=apply last;
-rewrite ^/article/([^.]*)$ /article/index.php?rewrite=$1&$args last;
+location /article/ {
+    try_files $uri $uri/ /article/index.php?rewrite=$uri&$args;
+}
