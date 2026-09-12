@@ -17,15 +17,17 @@ rewrite ^/sitemap.xml$ /site/sitemap.php last;
 rewrite ^/about/?$ /article/index.php?page=about last;
 rewrite ^/pwd/?$   /article/index.php?route=pwd   last;
 rewrite ^/apply/?$ /article/index.php?route=apply last;
-rewrite ^/article/([^.]*)$ /article/index.php?rewrite=$1&$args last;
+location /article/ {
+    try_files $uri $uri/ /article/index.php?rewrite=$uri&$args;
+}
 EOF;
 
 $apacheRules = <<<'EOF'
 RewriteEngine On
-RewriteRule ^site-(\d+)\.html$ /site/index.php?id=$1
-RewriteRule ^sitemap.xml$ /site/sitemap.php
+RewriteRule ^site-(\d+)\.html$ /site/index.php?id=$1 [L,QSA]
+RewriteRule ^sitemap\.xml$ /site/sitemap.php [L]
 RewriteRule ^about/?$ /article/index.php?page=about [L,QSA]
-RewriteRule ^pwd/?$   /article/index.php?route=pwd   [L,QSA]
+RewriteRule ^pwd/?$ /article/index.php?route=pwd [L,QSA]
 RewriteRule ^apply/?$ /article/index.php?route=apply [L,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
