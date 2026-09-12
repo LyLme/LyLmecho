@@ -1,8 +1,8 @@
 RewriteEngine On
-RewriteRule ^site-(\d+)\.html$ /site/index.php?id=$1
-RewriteRule ^sitemap.xml$ /site/sitemap.php
+RewriteRule ^site-(\d+)\.html$ /site/index.php?id=$1 [L,QSA]
+RewriteRule ^sitemap\.xml$ /site/sitemap.php [L]
 RewriteRule ^about/?$ /article/index.php?page=about [L,QSA]
-RewriteRule ^pwd/?$   /article/index.php?route=pwd   [L,QSA]
+RewriteRule ^pwd/?$ /article/index.php?route=pwd [L,QSA]
 RewriteRule ^apply/?$ /article/index.php?route=apply [L,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
